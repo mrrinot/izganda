@@ -1,0 +1,30 @@
+{
+    "compilerOptions": {
+        "allowJs": true,
+        "allowSyntheticDefaultImports": true,
+        "jsx": "preserve",
+        "lib": ["dom", "ES2020"],
+        "module": "esnext",
+        "moduleResolution": "node",
+        "noEmit": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": false,
+        "noImplicitAny": true,
+        "preserveConstEnums": true,
+        "removeComments": false,
+        "strictFunctionTypes": false,
+        "resolveJsonModule": true,
+        "skipLibCheck": true,
+        "sourceMap": true,
+        "strict": true,
+        "experimentalDecorators": true,
+        "target": "esnext",
+        "paths": {
+            "$src/*": ["./src/*"],
+            "$types/*": ["./types/*"]
+        },
+        "rootDir": ".",
+        "baseUrl": "."
+    },
+    "exclude": ["**/node_modules/*", "build", "coverage"]
+}
