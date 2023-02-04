@@ -1,10 +1,15 @@
+import { Controller } from "$src/Controller";
 import { Scene } from "phaser";
 
 export class GameScene extends Scene {
     map: Phaser.Tilemaps.Tilemap | null = null;
 
+    player: Controller;
+
     constructor() {
         super("GameScene");
+
+        this.player = new Controller(this, 640, 800);
     }
 
     preload() {
@@ -28,7 +33,11 @@ export class GameScene extends Scene {
         const layer = this.map.createLayer("Level1", tileset);
 
         this.map.setCollision([20, 48]);
+
+        this.player.create();
     }
 
-    update(time: number, delta: number) {}
+    update(time: number, delta: number) {
+        this.player.update(time, delta);
+    }
 }
