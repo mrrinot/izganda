@@ -1,6 +1,6 @@
 import { Scene } from "phaser";
 
-const MOUSE_DEADZONE = 20;
+const MOUSE_DEADZONE = 15;
 
 export class Controller {
     scene: Scene;
@@ -66,8 +66,13 @@ export class Controller {
                                 alpha: 0.8,
                                 width: 2,
                             },
+                            fillStyle: {
+                                color: 0xeeee89,
+                                alpha: 0.8,
+                            },
                         });
                     }
+
                     if (!this.aimAngleText) {
                         this.aimAngleText = this.scene.add.text(
                             this.aimStartPoint.x - 20,
@@ -84,6 +89,11 @@ export class Controller {
                             this.aimStartPoint.y,
                             75,
                         );
+                    this.aimCircle.fillCircle(
+                        this.aimStartPoint.x,
+                        this.aimStartPoint.y,
+                        MOUSE_DEADZONE,
+                    );
 
                     this.aimAngleText.x =
                         this.aimStartPoint.x -
@@ -96,11 +106,11 @@ export class Controller {
         });
 
         this.scene.input.on("pointerup", (pointer: Phaser.Input.Pointer) => {
+            this.aimStartPoint = null;
+
             if (this.arrow) {
                 this.arrow.destroy();
-
                 this.arrow = null;
-                this.aimStartPoint = null;
             }
 
             if (this.aimCircle) {
