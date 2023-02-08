@@ -79,7 +79,7 @@ export class Controller {
                     if (!this.aimAngleText) {
                         this.aimAngleText = this.scene.add.text(
                             this.aimStartPoint.x - 20,
-                            this.aimStartPoint.y - 110,
+                            this.aimStartPoint.y - MAX_AIM_DISTANCE - 30,
                             `${mouseDegreeAngle}°`,
                             { fontSize: "26px", color: "#eeee89" },
                         );
@@ -144,27 +144,39 @@ export class Controller {
         });
 
         this.scene.input.on("pointerup", (pointer: Phaser.Input.Pointer) => {
+            if (this.aimStartPoint) {
+                const mouseDistance = Phaser.Math.Distance.BetweenPoints(
+                    this.aimStartPoint,
+                    pointer,
+                );
+
+                const mouseAngle = Phaser.Math.Angle.BetweenPoints(
+                    pointer,
+                    this.aimStartPoint,
+                );
+
+                if (this.arrow) {
+                    this.arrow.destroy();
+                    this.arrow = null;
+                }
+
+                if (this.aimCircle) {
+                    this.aimCircle.destroy();
+                    this.aimCircle = null;
+                }
+
+                if (this.aimAngleText) {
+                    this.aimAngleText.destroy();
+                    this.aimAngleText = null;
+                }
+
+                if (this.aimPowerPreview) {
+                    this.aimPowerPreview.destroy();
+                    this.aimPowerPreview = null;
+                }
+            }
+
             this.aimStartPoint = null;
-
-            if (this.arrow) {
-                this.arrow.destroy();
-                this.arrow = null;
-            }
-
-            if (this.aimCircle) {
-                this.aimCircle.destroy();
-                this.aimCircle = null;
-            }
-
-            if (this.aimAngleText) {
-                this.aimAngleText.destroy();
-                this.aimAngleText = null;
-            }
-
-            if (this.aimPowerPreview) {
-                this.aimPowerPreview.destroy();
-                this.aimPowerPreview = null;
-            }
         });
     }
 
