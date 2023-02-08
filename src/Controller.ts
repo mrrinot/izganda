@@ -30,17 +30,17 @@ export class Controller {
         this.scene.add.rectangle(this.x + 16, this.y, 32, 64, 0xff0066, 0.8);
 
         this.scene.input.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
-            this.aimStartPoint = { x: pointer.x, y: pointer.y };
+            this.aimStartPoint = { x: pointer.worldX, y: pointer.worldY };
         });
 
         this.scene.input.on("pointermove", (pointer: Phaser.Input.Pointer) => {
             if (this.aimStartPoint) {
                 const mouseDistance = Phaser.Math.Distance.BetweenPoints(
                     this.aimStartPoint,
-                    pointer,
+                    { x: pointer.worldX, y: pointer.worldY },
                 );
                 const mouseAngle = Phaser.Math.Angle.BetweenPoints(
-                    pointer,
+                    { x: pointer.worldX, y: pointer.worldY },
                     this.aimStartPoint,
                 );
 

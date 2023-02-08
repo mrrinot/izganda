@@ -6,18 +6,18 @@ const config: Phaser.Types.Core.GameConfig = {
     title: "Izganda",
     scene: [GameScene],
     backgroundColor: "#333",
+    disableContextMenu: true,
     scale: {
-        mode: Phaser.Scale.FIT,
+        mode: Phaser.Scale.ScaleModes.FIT,
         parent: "game-container",
-        autoCenter: Phaser.Scale.CENTER_BOTH,
-        width: 832,
+        autoCenter: Phaser.Scale.Center.CENTER_BOTH,
+        width: 1920,
         height: 1024,
         max: {
-            width: 832,
+            width: 1920,
             height: 1024,
         },
     },
-
     physics: {
         default: "matter",
         matter: {

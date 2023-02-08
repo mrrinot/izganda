@@ -27,7 +27,14 @@ export class GameScene extends Scene {
         const { widthInPixels, heightInPixels } = this.map;
         this.matter.world.setBounds(0, 0, widthInPixels, heightInPixels);
 
-        this.cameras.main.setBounds(0, 0, widthInPixels, heightInPixels);
+        console.log("DKJQENZ", widthInPixels, heightInPixels);
+        this.cameras.main.setBounds(
+            -10000,
+            -10000,
+            widthInPixels + 100000,
+            heightInPixels + 100000,
+        );
+        this.cameras.main.centerOn(widthInPixels / 2, heightInPixels / 2);
 
         const tileset = this.map.addTilesetImage("tiles");
         const layer = this.map.createLayer("Level1", tileset);
