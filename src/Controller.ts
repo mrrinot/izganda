@@ -1,6 +1,7 @@
 import { Scene } from "phaser";
 
-const MOUSE_DEADZONE = 15;
+const MOUSE_DEADZONE_DISTANCE = 15;
+const MAX_AIM_DISTANCE = 75;
 
 export class Controller {
     scene: Scene;
@@ -17,6 +18,8 @@ export class Controller {
 
     aimAngleText: Phaser.GameObjects.Text | null = null;
 
+    aimPowerPreview: Phaser.GameObjects.Rectangle | null = null;
+
     constructor(scene: Scene, x: number, y: number) {
         this.scene = scene;
         this.x = x;
@@ -27,9 +30,6 @@ export class Controller {
         this.scene.add.rectangle(this.x + 16, this.y, 32, 64, 0xff0066, 0.8);
 
         this.scene.input.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
-            if (this.arrow) {
-                this.arrow.destroy();
-            }
             this.aimStartPoint = { x: pointer.x, y: pointer.y };
         });
 
@@ -39,18 +39,21 @@ export class Controller {
                     this.aimStartPoint,
                     pointer,
                 );
-                const mouseAngle =
-                    Phaser.Math.Angle.BetweenPoints(
-                        pointer,
-                        this.aimStartPoint,
-                    ) -
-                    Phaser.Math.PI2 / 2;
+                const mouseAngle = Phaser.Math.Angle.BetweenPoints(
+                    pointer,
+                    this.aimStartPoint,
+                );
 
-                const mouseDegreeAngle = Math.round(
+                let mouseDegreeAngle = Math.round(
                     Phaser.Math.RadToDeg(mouseAngle * -1),
                 );
 
-                if (mouseDistance > MOUSE_DEADZONE) {
+                // Only display positive angles between 0 and 360 that way
+                if (mouseDegreeAngle < 0) {
+                    mouseDegreeAngle += 360;
+                }
+
+                if (mouseDistance > MOUSE_DEADZONE_DISTANCE) {
                     if (!this.arrow) {
                         this.arrow = this.scene.add
                             .rectangle(this.x + 32, this.y, 50, 6, 0x12ff33, 1)
@@ -82,24 +85,59 @@ export class Controller {
                         );
                     }
 
+                    if (!this.aimPowerPreview) {
+                        this.aimPowerPreview = this.scene.add
+                            .rectangle(
+                                this.aimStartPoint.x,
+                                this.aimStartPoint.y,
+                                Math.min(
+                                    MAX_AIM_DISTANCE - MOUSE_DEADZONE_DISTANCE,
+                                    mouseDistance,
+                                ),
+                                6,
+                                0x12ff33,
+                                0.9,
+                            )
+                            .setOrigin(0, 0.5);
+                    }
+
+                    // Outer aim circle
                     this.aimCircle
                         .clear()
                         .strokeCircle(
                             this.aimStartPoint.x,
                             this.aimStartPoint.y,
-                            75,
+                            MAX_AIM_DISTANCE,
                         );
+                    // Show deadzone
                     this.aimCircle.fillCircle(
                         this.aimStartPoint.x,
                         this.aimStartPoint.y,
-                        MOUSE_DEADZONE,
+                        MOUSE_DEADZONE_DISTANCE,
                     );
 
+                    // Shift angle text based on angle length (1, 2 or 3 digits)
                     this.aimAngleText.x =
                         this.aimStartPoint.x -
                         (7 + 7 * String(mouseDegreeAngle).length);
                     this.aimAngleText.text = `${mouseDegreeAngle}°`;
 
+                    // Power bar preview length based on % of distance
+                    this.aimPowerPreview.width = Math.min(
+                        MAX_AIM_DISTANCE - MOUSE_DEADZONE_DISTANCE,
+                        mouseDistance,
+                    );
+
+                    // Move power bar preview to the edge of the deadzone circle preview
+                    this.aimPowerPreview.x =
+                        this.aimStartPoint.x +
+                        MOUSE_DEADZONE_DISTANCE * Math.cos(mouseAngle);
+                    this.aimPowerPreview.y =
+                        this.aimStartPoint.y +
+                        MOUSE_DEADZONE_DISTANCE * Math.sin(mouseAngle);
+
+                    // Rotate both the preview and the actual arrow
+                    this.aimPowerPreview.rotation = mouseAngle;
                     this.arrow.rotation = mouseAngle;
                 }
             }
@@ -121,6 +159,11 @@ export class Controller {
             if (this.aimAngleText) {
                 this.aimAngleText.destroy();
                 this.aimAngleText = null;
+            }
+
+            if (this.aimPowerPreview) {
+                this.aimPowerPreview.destroy();
+                this.aimPowerPreview = null;
             }
         });
     }
