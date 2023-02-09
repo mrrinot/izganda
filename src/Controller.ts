@@ -2,7 +2,7 @@ import { Scene } from "phaser";
 import { Arrow } from "./Arrow";
 
 const MOUSE_DEADZONE_DISTANCE = 15;
-const MAX_AIM_DISTANCE = 75;
+const MAX_AIM_DISTANCE = 100;
 
 export class Controller {
     scene: Scene;
@@ -133,8 +133,8 @@ export class Controller {
 
                     // Power bar preview length based on % of distance
                     this.aimPowerPreview.width = Math.min(
+                        mouseDistance - MOUSE_DEADZONE_DISTANCE,
                         MAX_AIM_DISTANCE - MOUSE_DEADZONE_DISTANCE,
-                        mouseDistance,
                     );
 
                     // Move power bar preview to the edge of the deadzone circle preview
@@ -160,7 +160,7 @@ export class Controller {
                     { x: pointer.worldX, y: pointer.worldY },
                 );
                 const clampedDistance = Math.min(
-                    Math.max(mouseDistance, MOUSE_DEADZONE_DISTANCE),
+                    Math.max(mouseDistance - MOUSE_DEADZONE_DISTANCE, 0),
                     MAX_AIM_DISTANCE,
                 );
 
