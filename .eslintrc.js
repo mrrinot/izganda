@@ -33,6 +33,18 @@ module.exports = {
         "no-unused-vars": "off",
         "import/no-cycle": "off",
         "no-template-curly-in-string": "off",
+        "import/no-unresolved": [
+            "off",
+            {
+                patterns: ["*.d.ts"],
+            },
+        ],
+        "import/extensions": [
+            "off",
+            {
+                patterns: ["*.d.ts"],
+            },
+        ],
     },
     overrides: [
         {

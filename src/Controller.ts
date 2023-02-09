@@ -1,4 +1,5 @@
 import { Scene } from "phaser";
+import { Arrow } from "./Arrow";
 
 const MOUSE_DEADZONE_DISTANCE = 15;
 const MAX_AIM_DISTANCE = 75;
@@ -10,7 +11,9 @@ export class Controller {
 
     y: number;
 
-    arrow: Phaser.GameObjects.Rectangle | null = null;
+    arrow: Arrow | null = null;
+
+    bow: Phaser.GameObjects.Image | null = null;
 
     aimStartPoint: { x: number; y: number } | null = null;
 
@@ -26,8 +29,16 @@ export class Controller {
         this.y = y;
     }
 
+    preload() {
+        this.scene.load.image("bow", "images/bow.png");
+        this.scene.load.image("arrow", "images/arrow.png");
+    }
+
     create() {
         this.scene.add.rectangle(this.x + 16, this.y, 32, 64, 0xff0066, 0.8);
+        this.bow = this.scene.add
+            .image(this.x + 32, this.y, "bow")
+            .setOrigin(1, 0.5);
 
         this.scene.input.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
             this.aimStartPoint = { x: pointer.worldX, y: pointer.worldY };
@@ -55,9 +66,7 @@ export class Controller {
 
                 if (mouseDistance > MOUSE_DEADZONE_DISTANCE) {
                     if (!this.arrow) {
-                        this.arrow = this.scene.add
-                            .rectangle(this.x + 32, this.y, 50, 6, 0x12ff33, 1)
-                            .setOrigin(0, 0.5);
+                        this.arrow = new Arrow(this.scene, this.x + 32, this.y);
                     }
 
                     if (!this.aimCircle) {
@@ -138,7 +147,8 @@ export class Controller {
 
                     // Rotate both the preview and the actual arrow
                     this.aimPowerPreview.rotation = mouseAngle;
-                    this.arrow.rotation = mouseAngle;
+                    this.bow!.rotation = mouseAngle;
+                    this.arrow.setRotation(mouseAngle);
                 }
             }
         });
@@ -147,17 +157,18 @@ export class Controller {
             if (this.aimStartPoint) {
                 const mouseDistance = Phaser.Math.Distance.BetweenPoints(
                     this.aimStartPoint,
-                    pointer,
+                    { x: pointer.worldX, y: pointer.worldY },
+                );
+                const clampedDistance = Math.min(
+                    Math.max(mouseDistance, MOUSE_DEADZONE_DISTANCE),
+                    MAX_AIM_DISTANCE,
                 );
 
-                const mouseAngle = Phaser.Math.Angle.BetweenPoints(
-                    pointer,
-                    this.aimStartPoint,
-                );
-
+                console.log("DKNQZ", mouseDistance, clampedDistance);
                 if (this.arrow) {
-                    this.arrow.destroy();
-                    this.arrow = null;
+                    this.arrow.shoot(
+                        (clampedDistance * 100) / MAX_AIM_DISTANCE,
+                    );
                 }
 
                 if (this.aimCircle) {

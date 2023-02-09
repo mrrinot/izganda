@@ -21,7 +21,9 @@ const config: Phaser.Types.Core.GameConfig = {
     physics: {
         default: "matter",
         matter: {
-            gravity: { y: 1 },
+            debug: true,
+            "plugins.collisionevents": true,
+            gravity: { x: 0, y: 3.5 },
         },
     },
     plugins: {

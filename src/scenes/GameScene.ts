@@ -15,6 +15,8 @@ export class GameScene extends Scene {
     preload() {
         this.load.image("tiles", "tilesets/gridtiles.png");
         this.load.tilemapTiledJSON("map", "maps/simple-map.json");
+
+        this.player.preload();
     }
 
     create() {
@@ -25,9 +27,13 @@ export class GameScene extends Scene {
         });
 
         const { widthInPixels, heightInPixels } = this.map;
-        this.matter.world.setBounds(0, 0, widthInPixels, heightInPixels);
 
-        console.log("DKJQENZ", widthInPixels, heightInPixels);
+        this.matter.world.setBounds(
+            -10000,
+            -10000,
+            widthInPixels + 100000,
+            heightInPixels + 100000,
+        );
         this.cameras.main.setBounds(
             -10000,
             -10000,
