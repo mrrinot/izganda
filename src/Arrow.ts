@@ -34,8 +34,8 @@ export class Arrow {
         this.x = x;
         this.y = y;
 
-        this.body = Bodies.rectangle(0, 0, 4, 40, { density: 10 });
-        this.head = Bodies.polygon(0, -25, 3, 6, {
+        this.body = Bodies.rectangle(0, 0, 3, 40, { density: 10 });
+        this.head = Bodies.polygon(0, -23, 3, 8, {
             density: 200,
             angle: Phaser.Math.DegToRad(90),
         });
@@ -47,7 +47,7 @@ export class Arrow {
         this.image = this.scene.matter.add.image(0, 0, "arrow");
 
         this.image.setExistingBody(this.compoundBody as BodyType);
-        this.image.setOrigin(0.5, 0.4);
+        this.image.setOrigin(0.5, 0.1);
         this.image.setPosition(this.x, this.y);
         this.image.setIgnoreGravity(true);
 
