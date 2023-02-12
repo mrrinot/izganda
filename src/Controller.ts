@@ -164,7 +164,6 @@ export class Controller {
                     MAX_AIM_DISTANCE,
                 );
 
-                console.log("DKNQZ", mouseDistance, clampedDistance);
                 if (this.arrow) {
                     this.arrow.shoot(
                         (clampedDistance * 100) / MAX_AIM_DISTANCE,
@@ -191,5 +190,9 @@ export class Controller {
         });
     }
 
-    update(time: number, delta: number) {}
+    update(time: number, delta: number) {
+        if (this.arrow) {
+            this.arrow.update(time, delta);
+        }
+    }
 }

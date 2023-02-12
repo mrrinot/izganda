@@ -2,17 +2,8 @@ import { BodyType } from "matter";
 import { Scene } from "phaser";
 import CustomMatter from "typings/matter";
 
-const {
-    Bodies,
-    Body,
-    Sleeping,
-}: {
-    Bodies: typeof CustomMatter.Bodies;
-    Body: typeof CustomMatter.Body;
-    Sleeping: typeof CustomMatter.Sleeping;
-} =
-    // @ts-ignore
-    Phaser.Physics.Matter.Matter;
+// @ts-ignore
+const { Bodies, Body } = Phaser.Physics.Matter.Matter as typeof CustomMatter;
 
 export class Arrow {
     scene: Scene;
@@ -28,6 +19,8 @@ export class Arrow {
     compoundBody: CustomMatter.Body;
 
     image: Phaser.Physics.Matter.Image;
+
+    frozenAngle: number | null = null;
 
     constructor(scene: Scene, x: number, y: number) {
         this.scene = scene;
@@ -50,17 +43,17 @@ export class Arrow {
         this.image.setOrigin(0.5, 0.1);
         this.image.setPosition(this.x, this.y);
         this.image.setIgnoreGravity(true);
-
-        console.log("DZQN", this.compoundBody);
     }
 
     // Angle in radians
     setRotation(angle: number) {
-        this.compoundBody.angle = angle + Math.PI / 2;
+        this.frozenAngle = angle + Math.PI / 2;
     }
 
     // Percent of total power, not actual strength
     shoot(power: number) {
+        console.log("BROO", this.compoundBody.angle, power);
+        this.frozenAngle = null;
         this.image.setIgnoreGravity(false);
 
         Body.applyForce(
@@ -70,7 +63,7 @@ export class Arrow {
                 y: this.compoundBody.position.y - 0.1,
             },
             {
-                x: 700,
+                x: -700,
                 y: -1500,
             },
         );
@@ -80,5 +73,9 @@ export class Arrow {
         this.image.destroy();
     }
 
-    update(time: number, delta: number) {}
+    update(time: number, delta: number) {
+        if (this.frozenAngle) {
+            this.compoundBody.angle = this.frozenAngle;
+        }
+    }
 }
