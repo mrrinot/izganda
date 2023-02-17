@@ -57,9 +57,8 @@ export class Arrow {
         if (this.frozenAngle) {
             this.image.setIgnoreGravity(false);
 
-            const xOffset =
-                Math.abs(this.frozenAngle) > Math.PI / 2 ? 0.1 : -0.1;
-            const yOffset = this.frozenAngle < 0 ? 0.1 : -0.1;
+            const xFrom = 100 * Math.cos(this.frozenAngle + Math.PI);
+            const yFrom = 100 * Math.sin(this.frozenAngle + Math.PI);
 
             const xTarget =
                 ((POWER_RATIO * power) / 100) * Math.cos(this.frozenAngle);
@@ -67,19 +66,17 @@ export class Arrow {
                 ((POWER_RATIO * power) / 100) * Math.sin(this.frozenAngle);
 
             this.frozenAngle = null;
-            console.log("DZQK", xOffset, yOffset);
             Body.applyForce(
                 this.compoundBody,
                 {
-                    x: this.compoundBody.position.x + xOffset,
-                    y: this.compoundBody.position.y + yOffset,
+                    x: this.compoundBody.position.x + xFrom,
+                    y: this.compoundBody.position.y + yFrom,
                 },
                 {
                     x: xTarget,
                     y: yTarget,
                 },
             );
-            this.scene.add.image(this.x + xTarget, this.y + yTarget, "arrow");
         }
     }
 

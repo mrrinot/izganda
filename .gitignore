@@ -5,6 +5,7 @@ out/
 doc_out/
 docs/
 apidocs/
+.DS_Store
 
 # Logs
 logs
