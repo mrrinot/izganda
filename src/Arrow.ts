@@ -1,9 +1,10 @@
 import { BodyType } from "matter";
 import { Scene } from "phaser";
+
 import CustomMatter from "typings/matter";
 
 // @ts-ignore
-const { Bodies, Body } = Phaser.Physics.Matter.Matter as typeof CustomMatter;
+const { Body } = Phaser.Physics.Matter.Matter as typeof CustomMatter;
 
 const POWER_RATIO = 1500;
 
@@ -14,11 +15,7 @@ export class Arrow {
 
     y: number;
 
-    head: CustomMatter.Body;
-
-    body: CustomMatter.Body;
-
-    compoundBody: CustomMatter.Body;
+    head: BodyType;
 
     image: Phaser.Physics.Matter.Image;
 
@@ -29,19 +26,14 @@ export class Arrow {
         this.x = x;
         this.y = y;
 
-        this.body = Bodies.rectangle(0, 0, 3, 40, { density: 10 });
-        this.head = Bodies.polygon(0, -23, 3, 8, {
+        this.head = this.scene.matter.add.polygon(0, -23, 3, 8, {
             density: 200,
-            angle: Phaser.Math.DegToRad(90),
+            angle: Phaser.Math.DegToRad(30),
         });
 
-        this.compoundBody = Body.create({
-            parts: [this.head, this.body],
-        });
-        Body.setCentre(this.compoundBody, { x: 0, y: -5 }, true);
         this.image = this.scene.matter.add.image(0, 0, "arrow");
 
-        this.image.setExistingBody(this.compoundBody as BodyType);
+        this.image.setExistingBody(this.head);
         this.image.setOrigin(0.5, 0.1);
         this.image.setPosition(this.x, this.y);
         this.image.setIgnoreGravity(true);
@@ -67,10 +59,10 @@ export class Arrow {
 
             this.frozenAngle = null;
             Body.applyForce(
-                this.compoundBody,
+                this.head as CustomMatter.Body,
                 {
-                    x: this.compoundBody.position.x + xFrom,
-                    y: this.compoundBody.position.y + yFrom,
+                    x: this.head.position.x + xFrom,
+                    y: this.head.position.y + yFrom,
                 },
                 {
                     x: xTarget,
@@ -86,7 +78,7 @@ export class Arrow {
 
     update(time: number, delta: number) {
         if (this.frozenAngle) {
-            this.compoundBody.angle = this.frozenAngle + Math.PI / 2;
+            this.head.angle = this.frozenAngle + Math.PI / 2;
         }
     }
 }
