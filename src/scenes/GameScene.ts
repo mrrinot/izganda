@@ -9,7 +9,7 @@ export class GameScene extends Scene {
     constructor() {
         super("GameScene");
 
-        this.player = new Controller(this, 640, 800);
+        this.player = new Controller(this, 440, 400);
     }
 
     preload() {
@@ -46,6 +46,8 @@ export class GameScene extends Scene {
         const layer = this.map.createLayer("Level1", tileset);
 
         this.map.setCollision([20, 48]);
+
+        this.matter.world.convertTilemapLayer(layer);
 
         this.player.create();
     }

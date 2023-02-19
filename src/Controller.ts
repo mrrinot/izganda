@@ -31,7 +31,8 @@ export class Controller {
 
     preload() {
         this.scene.load.image("bow", "images/bow.png");
-        this.scene.load.image("arrow", "images/arrow.png");
+        this.scene.load.image("shaft", "images/shaft.png");
+        this.scene.load.image("arrowhead", "images/arrowhead.png");
     }
 
     create() {

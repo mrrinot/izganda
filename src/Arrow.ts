@@ -15,9 +15,9 @@ export class Arrow {
 
     y: number;
 
-    head: BodyType;
+    head: Phaser.Physics.Matter.Image;
 
-    image: Phaser.Physics.Matter.Image;
+    shaft: Phaser.Physics.Matter.Image;
 
     frozenAngle: number | null = null;
 
@@ -26,17 +26,25 @@ export class Arrow {
         this.x = x;
         this.y = y;
 
-        this.head = this.scene.matter.add.polygon(0, -23, 3, 8, {
-            density: 200,
-            angle: Phaser.Math.DegToRad(30),
-        });
+        const cat1 = this.scene.matter.world.nextGroup(true);
 
-        this.image = this.scene.matter.add.image(0, 0, "arrow");
+        this.head = this.scene.matter.add.image(this.x, this.y, "arrowhead");
+        // this.head.setCollisionGroup(cat1);
+        this.head.setIgnoreGravity(true);
 
-        this.image.setExistingBody(this.head);
-        this.image.setOrigin(0.5, 0.1);
-        this.image.setPosition(this.x, this.y);
-        this.image.setIgnoreGravity(true);
+        // this.shaft = this.scene.matter.add.image(this.x, this.y + 28, "shaft");
+        // this.shaft.setCollisionGroup(cat1);
+        // this.shaft.setIgnoreGravity(true);
+
+        // this.scene.matter.add.constraint(
+        //     this.head.body as BodyType,
+        //     this.shaft.body as BodyType,
+        //     15,
+        //     0.5,
+        //     {
+        //         pointB: { x: 0, y: -20 },
+        //     },
+        // );
     }
 
     // Angle in radians
@@ -47,8 +55,8 @@ export class Arrow {
     // Percent of total power, not actual strength
     shoot(power: number) {
         if (this.frozenAngle) {
-            this.image.setIgnoreGravity(false);
-
+            this.head.setIgnoreGravity(false);
+            // this.shaft.setIgnoreGravity(false);
             const xFrom = 100 * Math.cos(this.frozenAngle + Math.PI);
             const yFrom = 100 * Math.sin(this.frozenAngle + Math.PI);
 
@@ -58,23 +66,24 @@ export class Arrow {
                 ((POWER_RATIO * power) / 100) * Math.sin(this.frozenAngle);
 
             this.frozenAngle = null;
-            Body.applyForce(
-                this.head as CustomMatter.Body,
-                {
-                    x: this.head.position.x + xFrom,
-                    y: this.head.position.y + yFrom,
-                },
-                {
-                    x: xTarget,
-                    y: yTarget,
-                },
+            this.head.applyForce(
+                new Phaser.Math.Vector2({ x: xTarget, y: yTarget }),
             );
+            // Body.applyForce(
+            //     this.head.body as CustomMatter.Body,
+            //     {
+            //         x: this.head.x + xFrom,
+            //         y: this.head.y + yFrom,
+            //     },
+            //     {
+            //         x: xTarget,
+            //         y: yTarget,
+            //     },
+            // );
         }
     }
 
-    destroy() {
-        this.image.destroy();
-    }
+    destroy() {}
 
     update(time: number, delta: number) {
         if (this.frozenAngle) {
