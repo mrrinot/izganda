@@ -15,6 +15,7 @@ const allPlugins = [
 module.exports = {
     ignore: ["**/node_modules"],
     presets: [
+        "@babel/preset-react",
         [
             "@babel/preset-env",
             {
@@ -56,6 +57,17 @@ module.exports = {
         {
             test: /\.ts$/,
             plugins: [["@babel/plugin-transform-typescript"], ...allPlugins],
+        },
+        {
+            test: /\.tsx$/,
+            plugins: [
+                ["@babel/plugin-transform-typescript", { isTSX: true }],
+                ...allPlugins,
+            ],
+        },
+        {
+            test: /\.jsx?$/,
+            plugins: allPlugins,
         },
     ],
 };

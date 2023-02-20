@@ -9,7 +9,7 @@ const rootPath = path.resolve(__dirname, "..");
 
 const paths = {
     publicPath: path.resolve(rootPath, "public"),
-    appEntryPoint: path.resolve(rootPath, "src/index.ts"),
+    appEntryPoint: path.resolve(rootPath, "src/index.tsx"),
     appBuild: path.resolve(rootPath, "build"),
     appHtml: path.resolve(rootPath, "public/index.html"),
     appSrc: path.resolve(rootPath, "src"),
@@ -57,7 +57,7 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.(js|ts)$/,
+                test: /\.(jsx?|tsx?)$/,
                 exclude: /node_modules/,
                 use: {
                     loader: "babel-loader",
