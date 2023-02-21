@@ -46,7 +46,7 @@ module.exports = {
     },
 
     resolve: {
-        extensions: [".js", ".ts", ".json"],
+        extensions: [".js", ".ts", ".json", ".jsx", ".tsx"],
         alias: {
             $src: paths.appSrc,
             $types: paths.appTypes,
