@@ -1,5 +1,5 @@
 {
-    "name": "ghostrunner-v2",
+    "name": "izganda",
     "version": "1.0.0",
     "description": "",
     "main": "index.js",
@@ -12,14 +12,14 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://gitlab.com/Rinot/ghostrunner-v2.git"
+        "url": "git+https://gitlab.com/Rinot/izganda.git"
     },
     "author": "",
     "license": "ISC",
     "bugs": {
-        "url": "https://gitlab.com/Rinot/ghostrunner-v2/issues"
+        "url": "https://gitlab.com/Rinot/izganda/issues"
     },
-    "homepage": "https://gitlab.com/Rinot/ghostrunner-v2#readme",
+    "homepage": "https://gitlab.com/Rinot/izganda#readme",
     "devDependencies": {
         "@babel/cli": "^7.20.7",
         "@babel/core": "^7.20.12",
