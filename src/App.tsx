@@ -2,11 +2,10 @@ import {
     Container,
     createTheme,
     CssBaseline,
-    Grid,
     ThemeProvider,
 } from "@mui/material";
 import React from "react";
-import BoardEditor from "./BoardEditor";
+import SolverBoardEditor from "./SolverBoardEditor";
 
 const theme = createTheme({
     palette: {
@@ -27,12 +26,8 @@ const theme = createTheme({
 const App = () => (
     <ThemeProvider theme={theme}>
         <CssBaseline enableColorScheme>
-            <Container maxWidth="sm" sx={{ marginTop: theme.spacing(5) }}>
-                <Grid container spacing={2} justifyItems="center">
-                    <Grid item>
-                        <BoardEditor boardName="simple.txt" />
-                    </Grid>
-                </Grid>
+            <Container maxWidth="md" sx={{ marginTop: theme.spacing(5) }}>
+                <SolverBoardEditor boardName="simple.txt" />
             </Container>
         </CssBaseline>
     </ThemeProvider>

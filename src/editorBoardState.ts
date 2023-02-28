@@ -5,18 +5,18 @@ declare module "valtio" {
     function useSnapshot<T extends object>(p: T): T;
 }
 
-interface BoardState {
+interface EditorBoardState {
     clues: Array<number | null>;
     cornerHints: Array<Array<number>>;
     centerHints: Array<Array<number>>;
 }
 
-const defaultValue: BoardState = {
+const defaultValue: EditorBoardState = {
     clues: Array.from({ length: 81 }).map(() => null),
     cornerHints: Array.from({ length: 81 }).map(() => []),
     centerHints: Array.from({ length: 81 }).map(() => []),
 };
 
-export const boardState = proxy(defaultValue);
+export const editorBoardState = proxy(defaultValue);
 
-devtools(boardState, { name: "board", enabled: true });
+devtools(editorBoardState, { name: "editorBoard", enabled: true });
