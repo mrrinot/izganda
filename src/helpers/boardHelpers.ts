@@ -1,11 +1,41 @@
 import { SolverBoard } from "$types/Board";
+import { getBox, getColumn, getRow } from "./tileHelpers";
+
+export const removeInitialCluesCandidates = (board: SolverBoard) => {
+    for (let i = 0; i < board.clues.length; i++) {
+        const tile = board.clues[i];
+
+        if (tile !== "-") {
+            const row = getRow(i);
+
+            // Looping on the row the tile is on.
+            for (const rowTile of row) {
+                board.candidates[rowTile][tile] = false;
+            }
+
+            const col = getColumn(i);
+
+            // Looping on the column the tile is on.
+            for (const colTile of col) {
+                board.candidates[colTile][tile] = false;
+            }
+
+            const box = getBox(i);
+
+            // Looping on the box the tile is on.
+            for (const boxTile of box) {
+                board.candidates[boxTile][tile] = false;
+            }
+        }
+    }
+};
 
 export const parseBoardFile = (file: string): SolverBoard => {
     const lines = file.split("\n");
 
     const res: SolverBoard = {
         clues: Array.from({ length: 81 }).map(() => "-"),
-        candidates: Array.from({ length: 81 }).map(() => []),
+        candidates: Array.from({ length: 81 }).map(() => ({})),
     };
 
     if (lines.length !== 9) {
@@ -21,8 +51,24 @@ export const parseBoardFile = (file: string): SolverBoard => {
 
         for (let x = 0; x < 9 && x < line.length; x++) {
             res.clues[y * 9 + x] = line[x];
+
+            if (line[x] === "-") {
+                res.candidates[y * 9 + x] = {
+                    1: true,
+                    2: true,
+                    3: true,
+                    4: true,
+                    5: true,
+                    6: true,
+                    7: true,
+                    8: true,
+                    9: true,
+                };
+            }
         }
     }
+
+    removeInitialCluesCandidates(res);
 
     return res;
 };

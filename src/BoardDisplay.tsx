@@ -29,7 +29,11 @@ const BoardDisplay = ({ board }: BoardDisplayProps) => (
                                     (i % 3);
 
                                 const clue = board.clues[index];
-                                const candidates = board.candidates[index];
+                                const candidates = Object.entries(
+                                    board.candidates[index],
+                                )
+                                    .filter(([, val]) => val)
+                                    .map(([id]) => id);
 
                                 return (
                                     <Grid
@@ -46,9 +50,21 @@ const BoardDisplay = ({ board }: BoardDisplayProps) => (
                                         justifyContent="center"
                                         alignItems="center"
                                     >
-                                        <Typography variant="h4">
-                                            {clue !== "-" && clue}
-                                        </Typography>
+                                        {clue !== "-" ? (
+                                            <Typography variant="h4">
+                                                {clue}
+                                            </Typography>
+                                        ) : (
+                                            <div
+                                                style={{
+                                                    fontSize:
+                                                        14 -
+                                                        candidates.length * 0.5,
+                                                }}
+                                            >
+                                                {candidates.join("")}
+                                            </div>
+                                        )}
                                     </Grid>
                                 );
                             })}

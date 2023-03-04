@@ -16,6 +16,7 @@ const SolverBoardEditor = ({ boardName }: SolverBoardEditorProps) => {
             const data = await fetch(`boards/${boardName}`);
 
             const boardStr = await data.text();
+
             setBoard(parseBoardFile(boardStr));
         })();
     }, [boardName]);
