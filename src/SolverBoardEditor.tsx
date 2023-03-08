@@ -1,8 +1,10 @@
-import { SolverBoard } from "$types/Board";
-import { Button, Stack } from "@mui/material";
+import { MoveHistory, SolverBoard } from "$types/Board";
+import { Button, Grid } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import MoveHistoryList from "$components/MoveHistoryList";
 import BoardDisplay from "./BoardDisplay";
 import { parseBoardFile } from "./helpers/boardHelpers";
+import { solveNextMove } from "./Solver/Solver";
 
 interface SolverBoardEditorProps {
     boardName: string;
@@ -10,6 +12,7 @@ interface SolverBoardEditorProps {
 
 const SolverBoardEditor = ({ boardName }: SolverBoardEditorProps) => {
     const [board, setBoard] = useState<SolverBoard | null>(null);
+    const [moves, setMoves] = useState<Array<MoveHistory>>([]);
 
     useEffect(() => {
         (async () => {
@@ -21,11 +24,41 @@ const SolverBoardEditor = ({ boardName }: SolverBoardEditorProps) => {
         })();
     }, [boardName]);
 
+    const handleNextMove = () => {
+        if (board) {
+            const ret = solveNextMove(board);
+
+            if (!ret) {
+                console.log("YOU WON??");
+            } else {
+                const { board: newBoard, move } = ret;
+
+                setMoves([...moves, { move, board: newBoard }]);
+                setBoard(newBoard);
+            }
+        }
+    };
+
+    if (!board) {
+        return null;
+    }
+
     return (
-        <Stack spacing={2} justifyContent="center" alignItems="center">
-            <Button variant="contained">Next move</Button>
-            {board && <BoardDisplay board={board} />}
-        </Stack>
+        <Grid container spacing={2} justifyContent="center" alignItems="center">
+            <Grid item>
+                <BoardDisplay board={board} />
+            </Grid>
+            <Grid container direction="column" item xs>
+                <Grid item container>
+                    <MoveHistoryList moveHistory={moves} />
+                </Grid>
+                <Grid item>
+                    <Button variant="contained" onClick={handleNextMove}>
+                        Next move
+                    </Button>
+                </Grid>
+            </Grid>
+        </Grid>
     );
 };
 

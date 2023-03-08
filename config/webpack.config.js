@@ -13,6 +13,7 @@ const paths = {
     appBuild: path.resolve(rootPath, "build"),
     appHtml: path.resolve(rootPath, "public/index.html"),
     appSrc: path.resolve(rootPath, "src"),
+    appComponents: path.resolve(rootPath, "src/components"),
     appTypes: path.resolve(rootPath, "types"),
 };
 
@@ -51,6 +52,7 @@ module.exports = {
             $src: paths.appSrc,
             $types: paths.appTypes,
             $config: __dirname,
+            $components: paths.appComponents,
         },
     },
 

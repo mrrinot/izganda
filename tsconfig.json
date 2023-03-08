@@ -21,6 +21,7 @@
         "target": "esnext",
         "paths": {
             "$src/*": ["./src/*"],
+            "$components/*": ["./src/components/*"],
             "$types/*": ["./types/*"]
         },
         "rootDir": ".",

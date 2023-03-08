@@ -1,31 +1,35 @@
-import { SolverBoard } from "$types/Board";
+import { Move, SolverBoard } from "$types/Board";
 import { getBox, getColumn, getRow } from "./tileHelpers";
+
+const removeCandidatesForMove = (board: SolverBoard, move: Move) => {
+    const row = getRow(move.index);
+
+    // Looping on the row the tile is on.
+    for (const rowTile of row) {
+        board.candidates[rowTile][move.clue] = false;
+    }
+
+    const col = getColumn(move.index);
+
+    // Looping on the column the tile is on.
+    for (const colTile of col) {
+        board.candidates[colTile][move.clue] = false;
+    }
+
+    const box = getBox(move.index);
+
+    // Looping on the box the tile is on.
+    for (const boxTile of box) {
+        board.candidates[boxTile][move.clue] = false;
+    }
+};
 
 export const removeInitialCluesCandidates = (board: SolverBoard) => {
     for (let i = 0; i < board.clues.length; i++) {
         const tile = board.clues[i];
 
         if (tile !== "-") {
-            const row = getRow(i);
-
-            // Looping on the row the tile is on.
-            for (const rowTile of row) {
-                board.candidates[rowTile][tile] = false;
-            }
-
-            const col = getColumn(i);
-
-            // Looping on the column the tile is on.
-            for (const colTile of col) {
-                board.candidates[colTile][tile] = false;
-            }
-
-            const box = getBox(i);
-
-            // Looping on the box the tile is on.
-            for (const boxTile of box) {
-                board.candidates[boxTile][tile] = false;
-            }
+            removeCandidatesForMove(board, { index: i, clue: tile });
         }
     }
 };
@@ -71,4 +75,9 @@ export const parseBoardFile = (file: string): SolverBoard => {
     removeInitialCluesCandidates(res);
 
     return res;
+};
+
+export const playMove = (board: SolverBoard, move: Move) => {
+    board.clues[move.index] = move.clue;
+    removeCandidatesForMove(board, move);
 };
