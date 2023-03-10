@@ -29,7 +29,11 @@ export const removeInitialCluesCandidates = (board: SolverBoard) => {
         const tile = board.clues[i];
 
         if (tile !== "-") {
-            removeCandidatesForMove(board, { index: i, clue: tile });
+            removeCandidatesForMove(board, {
+                index: i,
+                clue: tile,
+                strategy: "",
+            });
         }
     }
 };
@@ -80,4 +84,17 @@ export const parseBoardFile = (file: string): SolverBoard => {
 export const playMove = (board: SolverBoard, move: Move) => {
     board.clues[move.index] = move.clue;
     removeCandidatesForMove(board, move);
+};
+
+export const boardToText = (clues: Array<string>) => {
+    let ret = "";
+
+    for (let x = 0; x < 9; x++) {
+        for (let y = 0; y < 9; y++) {
+            ret += clues[x * 9 + y];
+        }
+        ret += "\n";
+    }
+
+    return ret;
 };

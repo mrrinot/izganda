@@ -3,7 +3,7 @@ import { Button, Grid } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import MoveHistoryList from "$components/MoveHistoryList";
 import BoardDisplay from "./BoardDisplay";
-import { parseBoardFile } from "./helpers/boardHelpers";
+import { boardToText, parseBoardFile } from "./helpers/boardHelpers";
 import { solveNextMove } from "./Solver/Solver";
 
 interface SolverBoardEditorProps {
@@ -43,18 +43,27 @@ const SolverBoardEditor = ({ boardName }: SolverBoardEditorProps) => {
         return null;
     }
 
+    const handleCopyBoard = async () => {
+        await navigator.clipboard.writeText(boardToText(board.clues));
+    };
+
     return (
         <Grid container spacing={2} justifyContent="center" alignItems="center">
             <Grid item>
                 <BoardDisplay board={board} />
             </Grid>
             <Grid container direction="column" item xs>
+                <Grid item>
+                    <Button variant="contained" onClick={handleNextMove}>
+                        Next move
+                    </Button>
+                </Grid>
                 <Grid item container>
                     <MoveHistoryList moveHistory={moves} />
                 </Grid>
                 <Grid item>
-                    <Button variant="contained" onClick={handleNextMove}>
-                        Next move
+                    <Button variant="contained" onClick={handleCopyBoard}>
+                        Get board string
                     </Button>
                 </Grid>
             </Grid>

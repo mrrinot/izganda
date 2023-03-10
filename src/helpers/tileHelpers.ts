@@ -44,7 +44,7 @@ for (let i = 0; i < 81; i++) {
     tileIndices.push({
         row: rowIndices.find((row) => row.includes(i))!,
         column: columnIndices.find((column) => column.includes(i))!,
-        box: rowIndices.find((box) => box.includes(i))!,
+        box: boxIndices.find((box) => box.includes(i))!,
     });
 }
 
