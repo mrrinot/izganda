@@ -83,6 +83,7 @@ export const parseBoardFile = (file: string): SolverBoard => {
 
 export const playMove = (board: SolverBoard, move: Move) => {
     board.clues[move.index] = move.clue;
+    board.candidates[move.index] = {};
     removeCandidatesForMove(board, move);
 };
 
