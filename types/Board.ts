@@ -1,14 +1,13 @@
-import ObjectOf from "./helpers/ObjectOf";
-
 export interface SolverBoard {
-    clues: Array<string>;
-    candidates: Array<ObjectOf<boolean>>;
+    clues: Array<number>;
+    candidates: Array<number>;
+    emptyCellIndices: Array<number>;
 }
 
 export interface Move {
     // 0 based index between 0 and 80
     index: number;
-    clue: string;
+    clue: number;
     strategy: string;
 }
 

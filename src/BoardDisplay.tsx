@@ -1,6 +1,10 @@
 import React from "react";
 import { SolverBoard } from "$types/Board";
 import { Grid, Typography } from "@mui/material";
+import {
+    getCandidateClues,
+    getCandidatesCount,
+} from "./helpers/candidatesHelpers";
 
 interface BoardDisplayProps {
     board: SolverBoard;
@@ -29,11 +33,9 @@ const BoardDisplay = ({ board }: BoardDisplayProps) => (
                                     (i % 3);
 
                                 const clue = board.clues[index];
-                                const candidates = Object.entries(
+                                const candidates = getCandidateClues(
                                     board.candidates[index],
-                                )
-                                    .filter(([, val]) => val)
-                                    .map(([id]) => id);
+                                );
 
                                 return (
                                     <Grid
@@ -50,7 +52,7 @@ const BoardDisplay = ({ board }: BoardDisplayProps) => (
                                         justifyContent="center"
                                         alignItems="center"
                                     >
-                                        {clue !== "-" ? (
+                                        {clue ? (
                                             <Typography variant="h4">
                                                 {clue}
                                             </Typography>

@@ -1,25 +1,24 @@
 import { playMove } from "$src/helpers/boardHelpers";
+import { checkClue } from "$src/helpers/candidatesHelpers";
 import { earlySuccess } from "$src/helpers/functions";
 import { getBox, getColumn, getRow } from "$src/helpers/tileHelpers";
 import { Move, SolverBoard } from "$types/Board";
 
 const STRATEGY_NAME = "Hidden Single";
 
+/*
+Look for cells that have the only candidate possible for a given clue in each row/column/box
+The difference with a naked single is that a naked single is a cell with ONLY ONE candidate possible.
+A hidden single is a cell with multiple candidates but one of them can ONLY go in this specific cell related to its row/column/box
+*/
 export const hiddenSingle = (board: SolverBoard): Move | null => {
     const testedRows: Array<string> = [];
     const testedColumns: Array<string> = [];
     const testedBoxes: Array<string> = [];
 
-    for (let i = 0; i < board.clues.length; i++) {
-        const clue = board.clues[i];
-
-        if (clue !== "-") {
-            // eslint-disable-next-line no-continue
-            continue;
-        }
-
-        for (let c = 1; c < 9; c++) {
-            if (!board.candidates[i][c]) {
+    for (const index of board.emptyCellIndices) {
+        for (let clue = 1; clue < 9; clue++) {
+            if (!checkClue(board.candidates[index], clue)) {
                 // eslint-disable-next-line no-continue
                 continue;
             }
@@ -31,26 +30,26 @@ export const hiddenSingle = (board: SolverBoard): Move | null => {
                 let cpt = 0;
 
                 // Check if we already searched this subset (row/col/box) for this hidden single
-                if (testedSubsets.includes(`${c}-${subSet[0]}`)) {
+                if (testedSubsets.includes(`${clue}-${subSet[0]}`)) {
                     return null;
                 }
 
                 for (let r = 0; r < subSet.length; r++) {
-                    if (board.candidates[subSet[r]][c]) {
+                    if (checkClue(board.candidates[subSet[r]], clue)) {
                         cpt++;
                     }
 
                     // More than 1 candidate present in subset, no hidden possible
                     if (cpt > 1) {
-                        testedSubsets.push(`${c}-${subSet[0]}`);
+                        testedSubsets.push(`${clue}-${subSet[0]}`);
                         return null;
                     }
                 }
 
                 // We found the hidden single
                 const move: Move = {
-                    clue: String(c),
-                    index: i,
+                    clue,
+                    index,
                     strategy: STRATEGY_NAME,
                 };
 
@@ -60,9 +59,9 @@ export const hiddenSingle = (board: SolverBoard): Move | null => {
             };
 
             const move = earlySuccess(
-                () => checkSubSet(getRow(i), testedRows),
-                () => checkSubSet(getColumn(i), testedColumns),
-                () => checkSubSet(getBox(i), testedBoxes),
+                () => checkSubSet(getRow(index), testedRows),
+                () => checkSubSet(getColumn(index), testedColumns),
+                () => checkSubSet(getBox(index), testedBoxes),
             );
 
             if (move) {

@@ -4,18 +4,15 @@ import { Move, SolverBoard } from "$types/Board";
 
 const STRATEGY_NAME = "Naked Single";
 
-/*
-Look for single candidates 
-*/
 export const nakedSingle = (board: SolverBoard): Move | null => {
     for (const index of board.emptyCellIndices) {
         const candidatesCount = getCandidatesCount(board.candidates[index]);
 
         if (candidatesCount === 1) {
-            for (let clue = 1; clue <= 9; clue++) {
-                if (checkClue(board.candidates[index], clue)) {
+            for (let i = 1; i <= 9; i++) {
+                if (checkClue(board.candidates[index], i)) {
                     const move: Move = {
-                        clue,
+                        clue: i,
                         index,
                         strategy: STRATEGY_NAME,
                     };

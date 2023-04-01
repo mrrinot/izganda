@@ -1,4 +1,5 @@
 import { Move, SolverBoard } from "$types/Board";
+import { initCandidates, removeClue } from "./candidatesHelpers";
 import { getBox, getColumn, getRow } from "./tileHelpers";
 
 const removeCandidatesForMove = (board: SolverBoard, move: Move) => {
@@ -6,32 +7,41 @@ const removeCandidatesForMove = (board: SolverBoard, move: Move) => {
 
     // Looping on the row the tile is on.
     for (const rowTile of row) {
-        board.candidates[rowTile][move.clue] = false;
+        board.candidates[rowTile] = removeClue(
+            board.candidates[rowTile],
+            move.clue,
+        );
     }
 
     const col = getColumn(move.index);
 
     // Looping on the column the tile is on.
     for (const colTile of col) {
-        board.candidates[colTile][move.clue] = false;
+        board.candidates[colTile] = removeClue(
+            board.candidates[colTile],
+            move.clue,
+        );
     }
 
     const box = getBox(move.index);
 
     // Looping on the box the tile is on.
     for (const boxTile of box) {
-        board.candidates[boxTile][move.clue] = false;
+        board.candidates[boxTile] = removeClue(
+            board.candidates[boxTile],
+            move.clue,
+        );
     }
 };
 
 export const removeInitialCluesCandidates = (board: SolverBoard) => {
     for (let i = 0; i < board.clues.length; i++) {
-        const tile = board.clues[i];
+        const clue = board.clues[i];
 
-        if (tile !== "-") {
+        if (clue) {
             removeCandidatesForMove(board, {
                 index: i,
-                clue: tile,
+                clue,
                 strategy: "",
             });
         }
@@ -42,8 +52,9 @@ export const parseBoardFile = (file: string): SolverBoard => {
     const lines = file.split("\n");
 
     const res: SolverBoard = {
-        clues: Array.from({ length: 81 }).map(() => "-"),
-        candidates: Array.from({ length: 81 }).map(() => ({})),
+        clues: Array.from({ length: 81 }).map(() => 0),
+        candidates: Array.from({ length: 81 }).map(() => 0),
+        emptyCellIndices: [],
     };
 
     if (lines.length !== 9) {
@@ -58,20 +69,13 @@ export const parseBoardFile = (file: string): SolverBoard => {
         }
 
         for (let x = 0; x < 9 && x < line.length; x++) {
-            res.clues[y * 9 + x] = line[x];
+            const index = y * 9 + x;
 
-            if (line[x] === "-") {
-                res.candidates[y * 9 + x] = {
-                    1: true,
-                    2: true,
-                    3: true,
-                    4: true,
-                    5: true,
-                    6: true,
-                    7: true,
-                    8: true,
-                    9: true,
-                };
+            res.clues[index] = line[x] === "-" ? 0 : Number(line[x]);
+
+            if (res.clues[index] === 0) {
+                res.emptyCellIndices.push(index);
+                res.candidates[index] = initCandidates();
             }
         }
     }
@@ -83,7 +87,11 @@ export const parseBoardFile = (file: string): SolverBoard => {
 
 export const playMove = (board: SolverBoard, move: Move) => {
     board.clues[move.index] = move.clue;
-    board.candidates[move.index] = {};
+    board.candidates[move.index] = 0;
+    board.emptyCellIndices = board.emptyCellIndices.filter(
+        (a) => a !== move.index,
+    );
+
     removeCandidatesForMove(board, move);
 };
 
