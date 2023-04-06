@@ -64,7 +64,7 @@ const BoardDisplay = ({ board }: BoardDisplayProps) => (
                                                         candidates.length * 0.5,
                                                 }}
                                             >
-                                                {candidates.join("")}
+                                                {candidates}
                                             </div>
                                         )}
                                     </Grid>

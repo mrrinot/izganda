@@ -11,7 +11,7 @@ export const initCandidates = () => {
 export const getCandidatesCount = (candidates: number) => candidates >> 10;
 
 export const checkClue = (candidates: number, clue: number) =>
-    (candidates >> clue) % 2 !== 0;
+    candidates & (1 << clue);
 
 export const removeClue = (candidates: number, clue: number) => {
     if (checkClue(candidates, clue)) {
@@ -30,13 +30,23 @@ export const removeClue = (candidates: number, clue: number) => {
 };
 
 export const getCandidateClues = (candidates: number) => {
-    const ret = [];
+    let ret = "";
 
     for (let i = 1; i <= 9; i++) {
         if (candidates & (1 << i)) {
-            ret.push(i);
+            ret += String(i);
         }
     }
 
     return ret;
+};
+
+export const getFirstCandidate = (candidates: number) => {
+    for (let i = 1; i <= 9; i++) {
+        if (candidates & (1 << i)) {
+            return i;
+        }
+    }
+
+    return 1;
 };
