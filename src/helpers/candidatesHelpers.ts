@@ -1,4 +1,4 @@
-export const initCandidates = () => {
+export const initCellCandidates = () => {
     let ret = 0;
 
     for (let i = 1; i <= 9; i++) {
@@ -10,11 +10,11 @@ export const initCandidates = () => {
 
 export const getCandidatesCount = (candidates: number) => candidates >> 10;
 
-export const checkClue = (candidates: number, clue: number) =>
+export const checkCandidate = (candidates: number, clue: number) =>
     candidates & (1 << clue);
 
-export const removeClue = (candidates: number, clue: number) => {
-    if (checkClue(candidates, clue)) {
+export const removeCandidate = (candidates: number, clue: number) => {
+    if (checkCandidate(candidates, clue)) {
         let ret = 0;
 
         for (let i = 1; i <= 9; i++) {
@@ -29,7 +29,7 @@ export const removeClue = (candidates: number, clue: number) => {
     return candidates;
 };
 
-export const getCandidateClues = (candidates: number) => {
+export const getCellCandidates = (candidates: number) => {
     let ret = "";
 
     for (let i = 1; i <= 9; i++) {

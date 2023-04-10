@@ -2,7 +2,7 @@ import React from "react";
 import { SolverBoard } from "$types/Board";
 import { Grid, Typography } from "@mui/material";
 import {
-    getCandidateClues,
+    getCellCandidates,
     getCandidatesCount,
 } from "./helpers/candidatesHelpers";
 
@@ -33,7 +33,7 @@ const BoardDisplay = ({ board }: BoardDisplayProps) => (
                                     (i % 3);
 
                                 const clue = board.clues[index];
-                                const candidates = getCandidateClues(
+                                const candidates = getCellCandidates(
                                     board.candidates[index],
                                 );
 
@@ -42,6 +42,7 @@ const BoardDisplay = ({ board }: BoardDisplayProps) => (
                                         item
                                         key={i}
                                         xs={4}
+                                        title={String(index)}
                                         alignSelf="center"
                                         sx={{
                                             width: "64px",

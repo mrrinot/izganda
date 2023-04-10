@@ -1,5 +1,8 @@
 import { playMove } from "$src/helpers/boardHelpers";
-import { checkClue, getCandidatesCount } from "$src/helpers/candidatesHelpers";
+import {
+    getCandidatesCount,
+    getFirstCandidate,
+} from "$src/helpers/candidatesHelpers";
 import { Move, SolverBoard } from "$types/Board";
 
 const STRATEGY_NAME = "Naked Single";
@@ -12,19 +15,15 @@ export const nakedSingle = (board: SolverBoard): Move | null => {
         const candidatesCount = getCandidatesCount(board.candidates[index]);
 
         if (candidatesCount === 1) {
-            for (let clue = 1; clue <= 9; clue++) {
-                if (checkClue(board.candidates[index], clue)) {
-                    const move: Move = {
-                        clue,
-                        index,
-                        strategy: STRATEGY_NAME,
-                    };
+            const move: Move = {
+                clue: getFirstCandidate(board.candidates[index]),
+                index,
+                strategy: STRATEGY_NAME,
+            };
 
-                    playMove(board, move);
+            playMove(board, move);
 
-                    return move;
-                }
-            }
+            return move;
         }
     }
 

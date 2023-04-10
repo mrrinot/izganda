@@ -1,5 +1,5 @@
 import { Move, SolverBoard } from "$types/Board";
-import { initCandidates, removeClue } from "./candidatesHelpers";
+import { initCellCandidates, removeCandidate } from "./candidatesHelpers";
 import { getBox, getColumn, getRow } from "./tileHelpers";
 
 const removeCandidatesForMove = (board: SolverBoard, move: Move) => {
@@ -7,7 +7,7 @@ const removeCandidatesForMove = (board: SolverBoard, move: Move) => {
 
     // Looping on the row the tile is on.
     for (const rowTile of row) {
-        board.candidates[rowTile] = removeClue(
+        board.candidates[rowTile] = removeCandidate(
             board.candidates[rowTile],
             move.clue,
         );
@@ -17,7 +17,7 @@ const removeCandidatesForMove = (board: SolverBoard, move: Move) => {
 
     // Looping on the column the tile is on.
     for (const colTile of col) {
-        board.candidates[colTile] = removeClue(
+        board.candidates[colTile] = removeCandidate(
             board.candidates[colTile],
             move.clue,
         );
@@ -27,7 +27,7 @@ const removeCandidatesForMove = (board: SolverBoard, move: Move) => {
 
     // Looping on the box the tile is on.
     for (const boxTile of box) {
-        board.candidates[boxTile] = removeClue(
+        board.candidates[boxTile] = removeCandidate(
             board.candidates[boxTile],
             move.clue,
         );
@@ -75,7 +75,7 @@ export const parseBoardFile = (file: string): SolverBoard => {
 
             if (res.clues[index] === 0) {
                 res.emptyCellIndices.push(index);
-                res.candidates[index] = initCandidates();
+                res.candidates[index] = initCellCandidates();
             }
         }
     }
