@@ -20,7 +20,7 @@ const removePairFromSubSet = (
     for (let m = 0; m < subSet.length; m++) {
         const count = getCandidatesCount(board.candidates[subSet[m]]);
 
-        if (count > 0 && !pairIndices.includes(m)) {
+        if (count > 0 && !pairIndices.includes(subSet[m])) {
             board.candidates[subSet[m]] = removeCandidate(
                 board.candidates[subSet[m]],
                 Number(pair[0]),
@@ -57,7 +57,7 @@ const checkSubSet = (
 
     for (let r = 0; r < subSet.length; r++) {
         if (getCellCandidates(board.candidates[subSet[r]]) === pair) {
-            pairIndices.push(r);
+            pairIndices.push(subSet[r]);
         }
 
         if (pairIndices.length === 2) {

@@ -11,7 +11,7 @@ export const initCellCandidates = () => {
 export const getCandidatesCount = (candidates: number) => candidates >> 10;
 
 export const checkCandidate = (candidates: number, clue: number) =>
-    candidates & (1 << clue);
+    (candidates & (1 << clue)) !== 0;
 
 export const removeCandidate = (candidates: number, clue: number) => {
     if (checkCandidate(candidates, clue)) {
