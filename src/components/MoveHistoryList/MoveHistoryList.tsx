@@ -11,9 +11,15 @@ const MoveHistoryList = ({ moveHistory }: MoveHistoryListProps) => (
     <Paper sx={{ padding: "8px" }}>
         <Typography variant="h5">Moves</Typography>
         <Stack>
-            {moveHistory.map(({ board, move }) => (
-                <div key={move.index}>
-                    {move.index} {move.clue} {move.strategy}
+            {moveHistory.map(({ move }, index) => (
+                <div key={index}>
+                    {move ? (
+                        <div>
+                            {move.index} {move.clue} {move.strategy}
+                        </div>
+                    ) : (
+                        "No move just removing stuff"
+                    )}
                 </div>
             ))}
         </Stack>

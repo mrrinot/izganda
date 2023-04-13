@@ -1,5 +1,10 @@
 import { Move, SolverBoard } from "$types/Board";
-import { initCellCandidates, removeCandidate } from "./candidatesHelpers";
+import {
+    getCandidatesCount,
+    getFirstCandidate,
+    initCellCandidates,
+    removeCandidate,
+} from "./candidatesHelpers";
 import { getBox, getColumn, getRow } from "./tileHelpers";
 
 const removeCandidatesForMove = (board: SolverBoard, move: Move) => {
@@ -95,15 +100,55 @@ export const playMove = (board: SolverBoard, move: Move) => {
     removeCandidatesForMove(board, move);
 };
 
-export const boardToText = (clues: Array<string>) => {
+export const boardToText = (clues: Array<number>) => {
     let ret = "";
 
     for (let x = 0; x < 9; x++) {
         for (let y = 0; y < 9; y++) {
-            ret += clues[x * 9 + y];
+            const clue = clues[x * 9 + y];
+
+            ret += clue === 0 ? "-" : String(clue);
         }
         ret += "\n";
     }
 
     return ret;
+};
+
+export const removePairFromSubSet = (
+    board: SolverBoard,
+    pair: string,
+    subSet: Array<number>,
+    pairIndices: [number, number],
+    strategy: string,
+) => {
+    for (let m = 0; m < subSet.length; m++) {
+        const count = getCandidatesCount(board.candidates[subSet[m]]);
+
+        if (count > 0 && !pairIndices.includes(subSet[m])) {
+            board.candidates[subSet[m]] = removeCandidate(
+                board.candidates[subSet[m]],
+                Number(pair[0]),
+            );
+            board.candidates[subSet[m]] = removeCandidate(
+                board.candidates[subSet[m]],
+                Number(pair[1]),
+            );
+
+            if (getCandidatesCount(board.candidates[subSet[m]]) === 1) {
+                const move: Move = {
+                    clue: Number(
+                        getFirstCandidate(board.candidates[subSet[m]]),
+                    ),
+                    index: subSet[m],
+                    strategy,
+                };
+                playMove(board, move);
+
+                return move;
+            }
+        }
+    }
+
+    return null;
 };

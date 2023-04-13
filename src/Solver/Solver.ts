@@ -6,6 +6,7 @@ import { hiddenSingle } from "./Strategies/HiddenSingle";
 import { nakedPair } from "./Strategies/NakedPair";
 import { intersectionRemoval } from "./Strategies/IntersectionRemoval";
 import { nakedTriple } from "./Strategies/NakedTriple";
+import { hiddenPair } from "./Strategies/HiddenPair";
 
 export const solveNextMove = (board: SolverBoard) => {
     const newBoard = cloneDeep(board);
@@ -16,11 +17,8 @@ export const solveNextMove = (board: SolverBoard) => {
         () => intersectionRemoval(newBoard),
         () => nakedPair(newBoard),
         () => nakedTriple(newBoard),
+        () => hiddenPair(newBoard),
     );
-
-    if (!move) {
-        return null;
-    }
 
     return { board: newBoard, move };
 };

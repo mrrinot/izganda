@@ -1,4 +1,4 @@
-import { playMove } from "$src/helpers/boardHelpers";
+import { playMove, removePairFromSubSet } from "$src/helpers/boardHelpers";
 import {
     removeCandidate,
     getCellCandidates,
@@ -10,43 +10,6 @@ import { getBox, getColumn, getRow } from "$src/helpers/tileHelpers";
 import { Move, SolverBoard } from "$types/Board";
 
 const STRATEGY_NAME = "Naked Pair";
-
-const removePairFromSubSet = (
-    board: SolverBoard,
-    pair: string,
-    subSet: Array<number>,
-    pairIndices: [number, number],
-) => {
-    for (let m = 0; m < subSet.length; m++) {
-        const count = getCandidatesCount(board.candidates[subSet[m]]);
-
-        if (count > 0 && !pairIndices.includes(subSet[m])) {
-            board.candidates[subSet[m]] = removeCandidate(
-                board.candidates[subSet[m]],
-                Number(pair[0]),
-            );
-            board.candidates[subSet[m]] = removeCandidate(
-                board.candidates[subSet[m]],
-                Number(pair[1]),
-            );
-
-            if (getCandidatesCount(board.candidates[subSet[m]]) === 1) {
-                const move: Move = {
-                    clue: Number(
-                        getFirstCandidate(board.candidates[subSet[m]]),
-                    ),
-                    index: subSet[m],
-                    strategy: STRATEGY_NAME,
-                };
-                playMove(board, move);
-
-                return move;
-            }
-        }
-    }
-
-    return null;
-};
 
 const checkSubSet = (
     board: SolverBoard,
@@ -61,18 +24,13 @@ const checkSubSet = (
         }
 
         if (pairIndices.length === 2) {
-            const move = removePairFromSubSet(
+            return removePairFromSubSet(
                 board,
                 pair,
                 subSet,
                 pairIndices as [number, number],
+                STRATEGY_NAME,
             );
-
-            if (move) {
-                return move;
-            }
-
-            break;
         }
     }
     return null;

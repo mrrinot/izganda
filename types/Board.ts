@@ -12,6 +12,6 @@ export interface Move {
 }
 
 export interface MoveHistory {
-    move: Move;
+    move: Move | null;
     board: SolverBoard;
 }

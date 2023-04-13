@@ -29,6 +29,16 @@ export const removeCandidate = (candidates: number, clue: number) => {
     return candidates;
 };
 
+export const initCellWith = (possibleCandidates: Array<number>) => {
+    let ret = 0;
+
+    for (let i = 0; i < possibleCandidates.length; i++) {
+        ret |= 1 << possibleCandidates[i];
+    }
+
+    return ret | (possibleCandidates.length << 10);
+};
+
 export const getCellCandidates = (candidates: number) => {
     let ret = "";
 
