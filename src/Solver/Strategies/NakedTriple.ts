@@ -1,56 +1,13 @@
-import { playMove } from "$src/helpers/boardHelpers";
 import {
-    removeCandidate,
     getCellCandidates,
     getCandidatesCount,
-    getFirstCandidate,
+    removeCandidatesFromSubSet,
 } from "$src/helpers/candidatesHelpers";
 import { earlySuccess } from "$src/helpers/functions";
 import { getBox, getColumn, getRow } from "$src/helpers/tileHelpers";
 import { Move, SolverBoard } from "$types/Board";
 
 const STRATEGY_NAME = "Naked Triple";
-
-const removeTripleFromSubSet = (
-    board: SolverBoard,
-    triple: string,
-    subSet: Array<number>,
-    tripleIndices: [number, number, number],
-) => {
-    for (let m = 0; m < subSet.length; m++) {
-        const count = getCandidatesCount(board.candidates[subSet[m]]);
-
-        if (count > 0 && !tripleIndices.includes(subSet[m])) {
-            board.candidates[subSet[m]] = removeCandidate(
-                board.candidates[subSet[m]],
-                Number(triple[0]),
-            );
-            board.candidates[subSet[m]] = removeCandidate(
-                board.candidates[subSet[m]],
-                Number(triple[1]),
-            );
-            board.candidates[subSet[m]] = removeCandidate(
-                board.candidates[subSet[m]],
-                Number(triple[2]),
-            );
-
-            if (getCandidatesCount(board.candidates[subSet[m]]) === 1) {
-                const move: Move = {
-                    clue: Number(
-                        getFirstCandidate(board.candidates[subSet[m]]),
-                    ),
-                    index: subSet[m],
-                    strategy: STRATEGY_NAME,
-                };
-                playMove(board, move);
-
-                return move;
-            }
-        }
-    }
-
-    return null;
-};
 
 const checkSubSet = (
     board: SolverBoard,
@@ -110,11 +67,12 @@ const checkSubSet = (
         }
 
         if (tripleIndices.length === 3) {
-            return removeTripleFromSubSet(
+            return removeCandidatesFromSubSet(
                 board,
                 `${candidate1}${candidate2}${candidate3}`,
                 subSet,
-                tripleIndices as [number, number, number],
+                tripleIndices,
+                STRATEGY_NAME,
             );
         }
     }

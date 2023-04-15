@@ -1,9 +1,7 @@
-import { playMove, removePairFromSubSet } from "$src/helpers/boardHelpers";
 import {
-    removeCandidate,
     getCellCandidates,
     getCandidatesCount,
-    getFirstCandidate,
+    removeCandidatesFromSubSet,
 } from "$src/helpers/candidatesHelpers";
 import { earlySuccess } from "$src/helpers/functions";
 import { getBox, getColumn, getRow } from "$src/helpers/tileHelpers";
@@ -24,11 +22,11 @@ const checkSubSet = (
         }
 
         if (pairIndices.length === 2) {
-            return removePairFromSubSet(
+            return removeCandidatesFromSubSet(
                 board,
                 pair,
                 subSet,
-                pairIndices as [number, number],
+                pairIndices,
                 STRATEGY_NAME,
             );
         }

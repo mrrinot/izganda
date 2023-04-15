@@ -1,8 +1,7 @@
-import { removePairFromSubSet } from "$src/helpers/boardHelpers";
 import {
     checkCandidate,
     initCellWith,
-    removeAllCandidatesExcept,
+    removeCandidatesFromSubSet,
 } from "$src/helpers/candidatesHelpers";
 import { earlySuccess } from "$src/helpers/functions";
 import { getBox, getColumn, getRow } from "$src/helpers/tileHelpers";
@@ -46,11 +45,11 @@ const checkSubSet = (board: SolverBoard, subSet: Array<number>) => {
                 otherClue + 1,
             ]);
 
-            return removePairFromSubSet(
+            return removeCandidatesFromSubSet(
                 board,
                 `${i + 1}${otherClue + 1}`,
                 subSet,
-                possibleCellsByClues[i] as [number, number],
+                possibleCellsByClues[i],
                 STRATEGY_NAME,
             );
         }
