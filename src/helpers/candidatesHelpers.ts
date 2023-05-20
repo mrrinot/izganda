@@ -49,7 +49,7 @@ export const keepCandidates = (
     let ret = 0;
     let count = 0;
 
-    for (let i = 0; i < 9; i++) {
+    for (let i = 1; i <= 9; i++) {
         if (checkCandidate(candidates, i) && possibleCandidates.includes(i)) {
             ret |= 1 << i;
             count++;

@@ -27,7 +27,7 @@ const App = () => (
     <ThemeProvider theme={theme}>
         <CssBaseline enableColorScheme>
             <Container maxWidth="md" sx={{ marginTop: theme.spacing(5) }}>
-                <SolverBoardEditor boardName="hiddenTriple.txt" />
+                <SolverBoardEditor boardName="xWing.txt" />
             </Container>
         </CssBaseline>
     </ThemeProvider>

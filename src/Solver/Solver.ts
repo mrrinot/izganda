@@ -8,18 +8,20 @@ import { intersectionRemoval } from "./Strategies/IntersectionRemoval";
 import { nakedTriple } from "./Strategies/NakedTriple";
 import { hiddenPair } from "./Strategies/HiddenPair";
 import { hiddenTriple } from "./Strategies/HiddenTriple";
+import { xWing } from "./Strategies/XWing";
 
 export const solveNextMove = (board: SolverBoard) => {
     const newBoard = cloneDeep(board);
 
     const move = earlySuccess(
-        () => nakedSingle(newBoard),
-        () => hiddenSingle(newBoard),
-        () => intersectionRemoval(newBoard),
-        () => nakedPair(newBoard),
-        () => nakedTriple(newBoard),
-        () => hiddenPair(newBoard),
-        () => hiddenTriple(newBoard),
+        // () => nakedSingle(newBoard),
+        // () => hiddenSingle(newBoard),
+        // () => intersectionRemoval(newBoard),
+        // () => nakedPair(newBoard),
+        // () => nakedTriple(newBoard),
+        // () => hiddenPair(newBoard),
+        // () => hiddenTriple(newBoard),
+        () => xWing(newBoard),
     );
 
     return { board: newBoard, move };
