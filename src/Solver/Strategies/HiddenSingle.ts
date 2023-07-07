@@ -15,7 +15,6 @@ export const hiddenSingle = (board: SolverBoard): Move | null => {
     for (const index of board.emptyCellIndices) {
         for (let clue = 1; clue < 9; clue++) {
             if (!checkCandidate(board.candidates[index], clue)) {
-                // eslint-disable-next-line no-continue
                 continue;
             }
 

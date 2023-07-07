@@ -37,7 +37,6 @@ const checkSubSet = (
         const cellIndices = possibleCellsByClues[i];
 
         if (cellIndices.length !== 2 && cellIndices.length !== 3) {
-            // eslint-disable-next-line no-continue
             continue;
         }
 
@@ -52,14 +51,12 @@ const checkSubSet = (
 
         for (let y = 0; y < 9; y++) {
             if (i === y) {
-                // eslint-disable-next-line no-continue
                 continue;
             }
 
             const otherIndices = possibleCellsByClues[y];
 
             if (otherIndices.length !== 2 && otherIndices.length !== 3) {
-                // eslint-disable-next-line no-continue
                 continue;
             }
 

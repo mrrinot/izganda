@@ -82,7 +82,6 @@ export const intersectionRemoval = (board: SolverBoard): Move | null => {
         // Check for pointing pairs/triples in rows
         for (let clue = 0; clue < 9; clue++) {
             if (!checkCandidate(board.candidates[index], clue)) {
-                // eslint-disable-next-line no-continue
                 continue;
             }
 

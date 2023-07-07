@@ -1,10 +1,14 @@
 import {
     checkCandidate,
-    keepCandidates,
     removeCandidatesFromSubSet,
 } from "$src/helpers/candidatesHelpers";
 import { earlySuccess } from "$src/helpers/functions";
-import { getBox, getColumn, getRow } from "$src/helpers/tileHelpers";
+import {
+    columnIndices,
+    rowIndices,
+    getColumn,
+    getRow,
+} from "$src/helpers/tileHelpers";
 import { Move, SolverBoard } from "$types/Board";
 
 // The hidden triple map does not match this, you have to disable the other strategies to test this one.
@@ -12,115 +16,98 @@ const STRATEGY_NAME = "XWing";
 
 const checkSubSet = (
     board: SolverBoard,
-    subSet: Array<number>,
-    alreadyChecked: Array<number>,
+    allSubsets: Array<Array<number>>,
+    getOtherSubset: (index: number) => Array<number>,
 ) => {
-    if (alreadyChecked.includes(subSet[0])) {
-        return null;
-    }
-
-    alreadyChecked.push(subSet[0]);
-
-    const possibleCellsByClues: Array<Array<number>> = Array.from({
+    const possibleCellsByClues: Array<
+        Array<Array<{ index: number; positionInSubset: number }>>
+    > = Array.from({
         length: 9,
-    }).map(() => []);
+    }).map(() => Array.from({ length: 9 }).map(() => []));
 
-    for (let r = 0; r < subSet.length; r++) {
-        for (let clue = 1; clue <= 9; clue++) {
-            if (checkCandidate(board.candidates[subSet[r]], clue)) {
-                possibleCellsByClues[clue - 1].push(subSet[r]);
+    for (let s = 0; s < allSubsets.length; s++) {
+        for (let r = 0; r < allSubsets[s].length; r++) {
+            for (let clue = 1; clue <= 9; clue++) {
+                if (checkCandidate(board.candidates[allSubsets[s][r]], clue)) {
+                    possibleCellsByClues[s][clue - 1].push({
+                        index: allSubsets[s][r],
+                        positionInSubset: r,
+                    });
+                }
             }
         }
     }
 
-    for (let i = 0; i < 9; i++) {
-        const cellIndices = possibleCellsByClues[i];
-
-        if (cellIndices.length !== 2 && cellIndices.length !== 3) {
-            // eslint-disable-next-line no-continue
-            continue;
-        }
-
-        // This is doing the inverse of the Naked Triple in that we are storing the candidates in the array and are comparing the cell indices as matches
-        // Here we store the candidates (which are the clues - 1 from above)
-        const tripleCandidates: Array<number> = [i];
-
-        // The 1/2/3 potential cell indices
-        const cell1 = cellIndices[0];
-        const cell2 = cellIndices[1];
-        let cell3 = cellIndices[2] ?? -1;
-
-        for (let y = 0; y < 9; y++) {
-            if (i === y) {
-                // eslint-disable-next-line no-continue
+    for (let s = 0; s < allSubsets.length; s++) {
+        for (let i = 0; i < 9; i++) {
+            if (possibleCellsByClues[s][i].length !== 2) {
                 continue;
             }
 
-            const otherIndices = possibleCellsByClues[y];
-
-            if (otherIndices.length !== 2 && otherIndices.length !== 3) {
-                // eslint-disable-next-line no-continue
-                continue;
-            }
-
-            const matches =
-                (otherIndices.includes(cell1) ? 1 : 0) +
-                (otherIndices.includes(cell2) ? 1 : 0) +
-                (otherIndices.includes(cell3) ? 1 : 0);
-
-            if (otherIndices.length === 3) {
-                if (cell3 === -1) {
-                    // Ex: we are looking for 12 and this is 128, we want to extract 8
-                    if (matches === 2) {
-                        // Extract the third number from the candidates
-                        cell3 = otherIndices.find(
-                            (ind) => ![cell1, cell2].includes(ind),
-                        )!;
-
-                        tripleCandidates.push(y);
-                    }
-                } else if (matches === 3) {
-                    tripleCandidates.push(y);
+            for (let m = 0; m < allSubsets.length; m++) {
+                // Same subset as the one that matched, skipping
+                if (m === s) {
+                    continue;
                 }
-            } else if (otherIndices.length === 2) {
-                if (cell3 === -1) {
-                    // Ex: we are looking for 12 and this is 13, we want to extract 3
-                    if (matches === 1) {
-                        // Extract the third number from the candidates
-                        cell3 = otherIndices.find(
-                            (ind) => ![cell1, cell2].includes(ind),
-                        )!;
 
-                        tripleCandidates.push(y);
+                // The subset does not have 2 possible cells for the candidate we are looking for
+                if (possibleCellsByClues[m][i].length !== 2) {
+                    continue;
+                }
+
+                // Two cells on the first subset;
+                const a1 = possibleCellsByClues[s][i][0];
+                const a2 = possibleCellsByClues[s][i][1];
+
+                // Two cells on the second subset;
+                const b1 = possibleCellsByClues[m][i][0];
+                const b2 = possibleCellsByClues[m][i][1];
+
+                // Both possible cells are on the same column, we got a match
+                if (
+                    a1.positionInSubset === b1.positionInSubset &&
+                    a2.positionInSubset === b2.positionInSubset
+                ) {
+                    const m1 = removeCandidatesFromSubSet(
+                        board,
+                        String(i + 1),
+                        // Line 1
+                        allSubsets[s],
+                        [a1.index, a2.index],
+                        STRATEGY_NAME,
+                    );
+                    const m2 = removeCandidatesFromSubSet(
+                        board,
+                        String(i + 1),
+                        // Line 2
+                        allSubsets[m],
+                        [b1.index, b2.index],
+                        STRATEGY_NAME,
+                    );
+                    const m3 = removeCandidatesFromSubSet(
+                        board,
+                        String(i + 1),
+                        // Gets the column for the first position in subset
+                        getOtherSubset(a1.index),
+                        [a1.index, b1.index],
+                        STRATEGY_NAME,
+                    );
+                    const m4 = removeCandidatesFromSubSet(
+                        board,
+                        String(i + 1),
+                        // Gets the column for the second position in subset
+                        getOtherSubset(a2.index),
+                        [a2.index, b2.index],
+                        STRATEGY_NAME,
+                    );
+
+                    const move = m1 ?? m2 ?? m3 ?? m4;
+
+                    if (move) {
+                        return move;
                     }
-                } else if (matches === 2) {
-                    tripleCandidates.push(y);
                 }
             }
-        }
-
-        if (tripleCandidates.length === 3) {
-            // Removing everything except for the new naked pair
-            board.candidates[cell1] = keepCandidates(
-                board.candidates[cell1],
-                tripleCandidates.map((p) => p + 1),
-            );
-            board.candidates[cell2] = keepCandidates(
-                board.candidates[cell2],
-                tripleCandidates.map((p) => p + 1),
-            );
-            board.candidates[cell3] = keepCandidates(
-                board.candidates[cell3],
-                tripleCandidates.map((p) => p + 1),
-            );
-
-            return removeCandidatesFromSubSet(
-                board,
-                tripleCandidates.map((p) => p + 1).join(""),
-                subSet,
-                [cell1, cell2, cell3],
-                STRATEGY_NAME,
-            );
         }
     }
 
@@ -129,7 +116,7 @@ const checkSubSet = (
 
 /*
 Look for X-Wings
-When two row or column have identical a pair of candidates that see each others, they eliminate this candidate from other cells in the opposite row or column
+When two row or column have identical pair of candidates that see each others, they eliminate this candidate from other cells in the opposite row or column
 
 xxxx2xx2x
 ----x--x-
@@ -141,20 +128,13 @@ xxxx2xx2x
 Here the pair of 2s eliminate 2 as a candidate from the x cells
 */
 export const xWing = (board: SolverBoard): Move | null => {
-    const rowChecks: Array<number> = [];
-    const colChecks: Array<number> = [];
-    const boxChecks: Array<number> = [];
+    const move = earlySuccess(
+        () => checkSubSet(board, rowIndices, getColumn),
+        () => checkSubSet(board, columnIndices, getRow),
+    );
 
-    for (const index of board.emptyCellIndices) {
-        const move = earlySuccess(
-            () => checkSubSet(board, getRow(index), rowChecks),
-            () => checkSubSet(board, getColumn(index), colChecks),
-            () => checkSubSet(board, getBox(index), boxChecks),
-        );
-
-        if (move) {
-            return move;
-        }
+    if (move) {
+        return move;
     }
 
     return null;

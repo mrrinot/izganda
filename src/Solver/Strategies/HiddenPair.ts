@@ -24,7 +24,6 @@ const checkSubSet = (board: SolverBoard, subSet: Array<number>) => {
 
     for (let i = 0; i < 9; i++) {
         if (possibleCellsByClues[i].length !== 2) {
-            // eslint-disable-next-line no-continue
             continue;
         }
 

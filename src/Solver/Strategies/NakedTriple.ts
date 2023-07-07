@@ -22,7 +22,6 @@ const checkSubSet = (
 
     for (let r = 0; r < subSet.length; r++) {
         if (getCandidatesCount(board.candidates[subSet[r]]) === 0) {
-            // eslint-disable-next-line no-continue
             continue;
         }
 
