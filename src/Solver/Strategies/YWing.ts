@@ -5,7 +5,12 @@ import {
     removeCandidatesFromSubSet,
 } from "$src/helpers/candidatesHelpers";
 import { earlySuccess } from "$src/helpers/functions";
-import { getColumn, getRow, getBox } from "$src/helpers/tileHelpers";
+import {
+    getColumn,
+    getRow,
+    getBox,
+    getTilesSeenBy,
+} from "$src/helpers/tileHelpers";
 import { Move, SolverBoard } from "$types/Board";
 
 // The hidden triple map does not match this, you have to disable the other strategies to test this one.
@@ -94,6 +99,9 @@ const checkSubSet = (
                         s1,
                         s2,
                     );
+
+                    const tilesSeen = getTilesSeenBy(s1, s2);
+                    console.log("WE CAN REMOVE FROm", tilesSeen);
                     // WE HAVE A Y-WING
                 }
             }

@@ -77,7 +77,7 @@ export const getTilesSeenBy = (tA: number, tB: number) => {
     for (let i = 0; i < 9; i++) {
         if (getColumn(rowA[i]).includes(tB)) {
             /*
-                The two corners are INSIDE any of A and B's boxes: they are the only tiles seens by both
+                The two corners are INSIDE any of A and B's boxes: they are 3 tiles per boxes that are seen by both corners
             ----A-XXX
             ---XXX-B-
             ---------
@@ -85,10 +85,12 @@ export const getTilesSeenBy = (tA: number, tB: number) => {
             ---------
             ---------
             */
-            if (boxB.includes(rowA[i])) {
+            if (boxB.includes(rowA[i]) || boxA.includes(rowA[i])) {
                 res.push(
                     ...intersection(rowA, boxB),
                     ...intersection(rowB, boxA),
+                    ...intersection(columnA, boxB),
+                    ...intersection(columnB, boxA),
                 );
             } else {
                 /*
