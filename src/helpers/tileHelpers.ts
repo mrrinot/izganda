@@ -1,3 +1,5 @@
+import { intersection } from "lodash";
+
 export const rowIndices = [
     [0, 1, 2, 3, 4, 5, 6, 7, 8],
     [9, 10, 11, 12, 13, 14, 15, 16, 17],
@@ -51,3 +53,64 @@ for (let i = 0; i < 81; i++) {
 export const getRow = (index: number) => tileIndices[index].row;
 export const getColumn = (index: number) => tileIndices[index].column;
 export const getBox = (index: number) => tileIndices[index].box;
+
+export const getTilesSeenBy = (tA: number, tB: number) => {
+    const res: Array<number> = [];
+
+    const rowA = getRow(tA);
+    const rowB = getRow(tB);
+    const columnA = getColumn(tA);
+    const columnB = getColumn(tB);
+    const boxA = getBox(tA);
+    const boxB = getBox(tB);
+
+    if (rowA === rowB) {
+        return rowA.filter((i) => i !== tA && i !== tB);
+    }
+    if (columnA === columnB) {
+        return columnA.filter((i) => i !== tA && i !== tB);
+    }
+    if (boxA === boxB) {
+        return boxA.filter((i) => i !== tA && i !== tB);
+    }
+
+    for (let i = 0; i < 9; i++) {
+        if (getColumn(rowA[i]).includes(tB)) {
+            /*
+                The two corners are INSIDE any of A and B's boxes: they are the only tiles seens by both
+            ----A-XXX
+            ---XXX-B-
+            ---------
+            ---------
+            ---------
+            ---------
+            */
+            if (boxB.includes(rowA[i])) {
+                res.push(
+                    ...intersection(rowA, boxB),
+                    ...intersection(rowB, boxA),
+                );
+            } else {
+                /*
+                The two corners are OUTSIDE any of A and B's boxes: they are the only tiles seens by both
+            ----A---X
+            ---------
+            ---------
+            ----X---B
+            ---------
+            ---------
+            */
+                // First corner
+                res.push(rowA[i]);
+
+                // We compute the diff between A and the first corner, and it should be the opposite of the second corner and B
+                const diff = tA - rowA[i];
+
+                // Second corner
+                res.push(tB + diff);
+            }
+        }
+    }
+
+    return res;
+};
