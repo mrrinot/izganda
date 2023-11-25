@@ -4,10 +4,11 @@ export interface SolverBoard {
     emptyCellIndices: Array<number>;
 }
 
+// Index can clue can be null to indicate that a move just removed candidates and did not place a clue in.
 export interface Move {
     // 0 based index between 0 and 80
-    index: number;
-    clue: number;
+    index: number | null;
+    clue: number | null;
     strategy: string;
 }
 

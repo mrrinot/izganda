@@ -3,34 +3,29 @@ import { initCellCandidates, removeCandidate } from "./candidatesHelpers";
 import { getBox, getColumn, getRow } from "./tileHelpers";
 
 const removeCandidatesForMove = (board: SolverBoard, move: Move) => {
+    if (move.clue === null || move.index === null) {
+        return;
+    }
+
     const row = getRow(move.index);
 
     // Looping on the row the tile is on.
     for (const rowTile of row) {
-        board.candidates[rowTile] = removeCandidate(
-            board.candidates[rowTile],
-            move.clue,
-        );
+        removeCandidate(board.candidates, rowTile, move.clue);
     }
 
     const col = getColumn(move.index);
 
     // Looping on the column the tile is on.
     for (const colTile of col) {
-        board.candidates[colTile] = removeCandidate(
-            board.candidates[colTile],
-            move.clue,
-        );
+        removeCandidate(board.candidates, colTile, move.clue);
     }
 
     const box = getBox(move.index);
 
     // Looping on the box the tile is on.
     for (const boxTile of box) {
-        board.candidates[boxTile] = removeCandidate(
-            board.candidates[boxTile],
-            move.clue,
-        );
+        removeCandidate(board.candidates, boxTile, move.clue);
     }
 };
 
@@ -75,7 +70,7 @@ export const parseBoardFile = (file: string): SolverBoard => {
 
             if (res.clues[index] === 0) {
                 res.emptyCellIndices.push(index);
-                res.candidates[index] = initCellCandidates();
+                initCellCandidates(res.candidates, index);
             }
         }
     }
@@ -86,6 +81,10 @@ export const parseBoardFile = (file: string): SolverBoard => {
 };
 
 export const playMove = (board: SolverBoard, move: Move) => {
+    if (move.clue === null || move.index === null) {
+        return;
+    }
+
     board.clues[move.index] = move.clue;
     board.candidates[move.index] = 0;
     board.emptyCellIndices = board.emptyCellIndices.filter(

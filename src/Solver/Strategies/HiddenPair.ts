@@ -1,6 +1,6 @@
 import {
     checkCandidate,
-    initCellWith,
+    keepCandidates,
     removeCandidatesFromSubSet,
 } from "$src/helpers/candidatesHelpers";
 import { earlySuccess } from "$src/helpers/functions";
@@ -35,31 +35,46 @@ const checkSubSet = (board: SolverBoard, subSet: Array<number>) => {
 
         if (otherClue !== -1) {
             // Removing everything except for the new naked pair
-            board.candidates[possibleCellsByClues[i][0]] = initCellWith([
-                i + 1,
-                otherClue + 1,
-            ]);
-            board.candidates[possibleCellsByClues[i][1]] = initCellWith([
-                i + 1,
-                otherClue + 1,
-            ]);
+            const changed1 = keepCandidates(
+                board.candidates,
+                possibleCellsByClues[i][0],
+                [i + 1, otherClue + 1],
+            );
+            const changed2 = keepCandidates(
+                board.candidates,
+                possibleCellsByClues[i][1],
+                [i + 1, otherClue + 1],
+            );
 
-            return removeCandidatesFromSubSet(
+            const changed3 = removeCandidatesFromSubSet(
                 board,
                 `${i + 1}${otherClue + 1}`,
                 subSet,
                 possibleCellsByClues[i],
                 STRATEGY_NAME,
             );
+
+            if (changed3) {
+                return changed3;
+            }
+
+            if (changed1 || changed2) {
+                return {
+                    clue: null,
+                    index: null,
+                    strategy: STRATEGY_NAME,
+                };
+            }
         }
     }
 
-    return null;
+    return false;
 };
 
 /*
 Look for hidden pairs.
-A pair of candidates that can both only go in two cells, transforming them in naked pair by eliminating every other candidates from the two cells
+A pair of candidates that can both only go in two cells in a single subset, transforming them in naked pair by eliminating every other candidates from the two cells
+Also removes the newly naked pair's candidates from other cells in the subset.
 */
 export const hiddenPair = (board: SolverBoard): Move | null => {
     for (const index of board.emptyCellIndices) {

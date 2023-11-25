@@ -1,14 +1,17 @@
 import { Move, SolverBoard } from "$types/Board";
 import { playMove } from "./boardHelpers";
 
-export const initCellCandidates = () => {
-    let ret = 0;
+export const initCellCandidates = (
+    candidates: Array<number>,
+    index: number,
+) => {
+    candidates[index] = 0;
 
     for (let i = 1; i <= 9; i++) {
-        ret |= 1 << i;
+        candidates[index] |= 1 << i;
     }
 
-    return ret | (9 << 10);
+    candidates[index] |= 9 << 10;
 };
 
 export const getCandidatesCount = (candidates: number) => candidates >> 10;
@@ -16,20 +19,27 @@ export const getCandidatesCount = (candidates: number) => candidates >> 10;
 export const checkCandidate = (candidates: number, clue: number) =>
     (candidates & (1 << clue)) !== 0;
 
-export const removeCandidate = (candidates: number, clue: number) => {
-    if (checkCandidate(candidates, clue)) {
+export const removeCandidate = (
+    boardCandidates: Array<number>,
+    index: number,
+    clue: number,
+) => {
+    if (checkCandidate(boardCandidates[index], clue)) {
         let ret = 0;
 
         for (let i = 1; i <= 9; i++) {
-            if ((candidates >> i) % 2 && i !== clue) {
+            if ((boardCandidates[index] >> i) % 2 && i !== clue) {
                 ret |= 1 << i;
             }
         }
 
-        return ret | ((getCandidatesCount(candidates) - 1) << 10);
+        boardCandidates[index] =
+            ret | ((getCandidatesCount(boardCandidates[index]) - 1) << 10);
+
+        return true;
     }
 
-    return candidates;
+    return false;
 };
 
 export const initCellWith = (possibleCandidates: Array<number>) => {
@@ -43,20 +53,31 @@ export const initCellWith = (possibleCandidates: Array<number>) => {
 };
 
 export const keepCandidates = (
-    candidates: number,
-    possibleCandidates: Array<number>,
+    boardCandidates: Array<number>,
+    index: number,
+    candidatesKept: Array<number>,
 ) => {
     let ret = 0;
     let count = 0;
 
     for (let i = 1; i <= 9; i++) {
-        if (checkCandidate(candidates, i) && possibleCandidates.includes(i)) {
+        if (
+            checkCandidate(boardCandidates[index], i) &&
+            candidatesKept.includes(i)
+        ) {
             ret |= 1 << i;
             count++;
         }
     }
 
-    return ret | (count << 10);
+    ret |= count << 10;
+
+    if (ret === boardCandidates[index]) {
+        return false;
+    }
+
+    boardCandidates[index] = ret;
+    return true;
 };
 
 export const getCellCandidates = (candidates: number) => {
@@ -88,15 +109,26 @@ export const removeCandidatesFromSubSet = (
     excludedIndices: Array<number>,
     strategy: string,
 ) => {
+    let ret: Move | null = null;
+
     for (let m = 0; m < subSet.length; m++) {
         const count = getCandidatesCount(board.candidates[subSet[m]]);
 
         if (count > 0 && !excludedIndices.includes(subSet[m])) {
             for (let i = 0; i < candidates.length; i++) {
-                board.candidates[subSet[m]] = removeCandidate(
-                    board.candidates[subSet[m]],
+                const removed = removeCandidate(
+                    board.candidates,
+                    subSet[m],
                     Number(candidates[i]),
                 );
+
+                if (!ret && removed) {
+                    ret = {
+                        clue: null,
+                        index: null,
+                        strategy,
+                    };
+                }
             }
 
             if (getCandidatesCount(board.candidates[subSet[m]]) === 1) {
@@ -114,5 +146,5 @@ export const removeCandidatesFromSubSet = (
         }
     }
 
-    return null;
+    return ret;
 };

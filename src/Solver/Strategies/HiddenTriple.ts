@@ -98,26 +98,41 @@ const checkSubSet = (
 
         if (tripleCandidates.length === 3) {
             // Removing everything except for the new naked pair
-            board.candidates[cell1] = keepCandidates(
-                board.candidates[cell1],
+            const changed1 = keepCandidates(
+                board.candidates,
+                cell1,
                 tripleCandidates.map((p) => p + 1),
             );
-            board.candidates[cell2] = keepCandidates(
-                board.candidates[cell2],
+            const changed2 = keepCandidates(
+                board.candidates,
+                cell2,
                 tripleCandidates.map((p) => p + 1),
             );
-            board.candidates[cell3] = keepCandidates(
-                board.candidates[cell3],
+            const changed3 = keepCandidates(
+                board.candidates,
+                cell3,
                 tripleCandidates.map((p) => p + 1),
             );
 
-            return removeCandidatesFromSubSet(
+            const changed4 = removeCandidatesFromSubSet(
                 board,
                 tripleCandidates.map((p) => p + 1).join(""),
                 subSet,
                 [cell1, cell2, cell3],
                 STRATEGY_NAME,
             );
+
+            if (changed4) {
+                return changed4;
+            }
+
+            if (changed1 || changed2 || changed3) {
+                return {
+                    clue: null,
+                    index: null,
+                    strategy: STRATEGY_NAME,
+                };
+            }
         }
     }
 
