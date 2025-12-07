@@ -1,7 +1,7 @@
 const path = require("path");
 const webpack = require("webpack");
-const ConfigWebpackPlugin = require("config-webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 const nodeEnv = process.env.NODE_ENV;
@@ -65,16 +65,27 @@ module.exports = {
                     loader: "babel-loader",
                 },
             },
+            {
+                test: /\.css$/i,
+                use: [MiniCssExtractPlugin.loader, "css-loader", "postcss-loader"],
+            },
         ],
     },
 
     plugins: [
+        new webpack.ProvidePlugin({
+            Buffer: ["buffer", "Buffer"],
+            process: "process/browser",
+        }),
         new HtmlWebpackPlugin({
             template: paths.appHtml,
             inject: true,
         }),
-        new ConfigWebpackPlugin("config"),
         new webpack.DefinePlugin({}),
+        new MiniCssExtractPlugin({
+            filename: "[name].[contentHash].css",
+            chunkFilename: "[id].css",
+        }),
         nodeEnv === "production" &&
             new CopyWebpackPlugin({
                 patterns: [

@@ -1,5 +1,4 @@
 import { MoveHistory, SolverBoard } from "$types/Board";
-import { Button, Grid } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import MoveHistoryList from "$components/MoveHistoryList";
 import BoardDisplay from "./BoardDisplay";
@@ -48,26 +47,26 @@ const SolverBoardEditor = ({ boardName }: SolverBoardEditorProps) => {
     };
 
     return (
-        <Grid container spacing={2} justifyContent="center" alignItems="center">
-            <Grid item>
+        <div container spacing={2} justifyContent="center" alignItems="center">
+            <div item>
                 <BoardDisplay board={board} />
-            </Grid>
-            <Grid container direction="column" item xs>
-                <Grid item>
-                    <Button variant="contained" onClick={handleNextMove}>
+            </div>
+            <div container direction="column" item xs>
+                <div item>
+                    <button variant="contained" onClick={handleNextMove}>
                         Next move
-                    </Button>
-                </Grid>
-                <Grid item container>
+                    </button>
+                </div>
+                <div item container>
                     <MoveHistoryList moveHistory={moves} />
-                </Grid>
-                <Grid item>
-                    <Button variant="contained" onClick={handleCopyBoard}>
+                </div>
+                <div item>
+                    <button variant="contained" onClick={handleCopyBoard}>
                         Get board string
-                    </Button>
-                </Grid>
-            </Grid>
-        </Grid>
+                    </button>
+                </div>
+            </div>
+        </div>
     );
 };
 

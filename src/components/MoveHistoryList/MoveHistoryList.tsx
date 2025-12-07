@@ -1,6 +1,4 @@
 import { MoveHistory } from "$types/Board";
-import { Grid, Paper, Typography } from "@mui/material";
-import { Stack } from "@mui/system";
 import React from "react";
 
 interface MoveHistoryListProps {
@@ -8,9 +6,9 @@ interface MoveHistoryListProps {
 }
 
 const MoveHistoryList = ({ moveHistory }: MoveHistoryListProps) => (
-    <Paper sx={{ padding: "8px" }}>
-        <Typography variant="h5">Moves</Typography>
-        <Stack>
+    <div sx={{ padding: "8px" }}>
+        <div variant="h5">Moves</div>
+        <div>
             {moveHistory.map(({ move }, index) => (
                 <div key={index}>
                     {move ? (
@@ -22,8 +20,8 @@ const MoveHistoryList = ({ moveHistory }: MoveHistoryListProps) => (
                     )}
                 </div>
             ))}
-        </Stack>
-    </Paper>
+        </div>
+    </div>
 );
 
 export default MoveHistoryList;
