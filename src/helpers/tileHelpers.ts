@@ -64,26 +64,36 @@ export const getTilesSeenBy = (tA: number, tB: number) => {
     const boxA = getBox(tA);
     const boxB = getBox(tB);
 
+    // Both tiles on the same row, get all tiles except the two tiles
     if (rowA === rowB) {
         return rowA.filter((i) => i !== tA && i !== tB);
     }
+    // Both tiles on the same column, get all tiles except the two tiles
     if (columnA === columnB) {
         return columnA.filter((i) => i !== tA && i !== tB);
     }
+    // Both tiles in the same box, get all tiles except the two tiles
     if (boxA === boxB) {
         return boxA.filter((i) => i !== tA && i !== tB);
     }
 
+    // Loop through all rows
     for (let i = 0; i < 9; i++) {
         if (getColumn(rowA[i]).includes(tB)) {
             /*
-                The two corners are INSIDE any of A and B's boxes: they are 3 tiles per boxes that are seen by both corners
-            ----A-XXX
-            ---XXX-B-
-            ---------
-            ---------
-            ---------
-            ---------
+            The two corners are INSIDE any of A and B's boxes: they are 3 tiles per boxes that are seen by both corners
+
+            · · · | · A · | X X X
+            · · · | X X X | · B ·
+            · · · | · · · | · · ·
+            ------+-------+------
+            · · · | · · · | · · ·
+            · · · | · · · | · · ·
+            · · · | · · · | · · ·
+            ------+-------+------
+            · · · | · · · | · · ·
+            · · · | · · · | · · ·
+            · · · | · · · | · · ·
             */
             if (boxB.includes(rowA[i]) || boxA.includes(rowA[i])) {
                 res.push(
@@ -95,13 +105,20 @@ export const getTilesSeenBy = (tA: number, tB: number) => {
             } else {
                 /*
                 The two corners are OUTSIDE any of A and B's boxes: they are the only tiles seens by both
-            ----A---X
-            ---------
-            ---------
-            ----X---B
-            ---------
-            ---------
-            */
+
+                · · · | A · · | · · X
+                · · · | · · · | · · ·
+                · · · | · · · | · · ·
+                ------+-------+------
+                · · · | · · · | · · ·
+                · · · | X · · | · · B
+                · · · | · · · | · · ·
+                ------+-------+------
+                · · · | · · · | · · ·
+                · · · | · · · | · · ·
+                · · · | · · · | · · ·
+                */
+
                 // First corner
                 res.push(rowA[i]);
 

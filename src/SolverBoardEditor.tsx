@@ -2,7 +2,7 @@ import { MoveHistory, SolverBoard } from "$types/Board";
 import React, { useEffect, useState } from "react";
 import MoveHistoryList from "$components/MoveHistoryList";
 import BoardDisplay from "./BoardDisplay";
-import { boardToText, parseBoardFile } from "./helpers/boardHelpers";
+import { boardToText, parseBoardString } from "./helpers/boardHelpers";
 import { solveNextMove } from "./Solver/Solver";
 
 interface SolverBoardEditorProps {
@@ -19,7 +19,7 @@ const SolverBoardEditor = ({ boardName }: SolverBoardEditorProps) => {
 
             const boardStr = await data.text();
 
-            setBoard(parseBoardFile(boardStr));
+            setBoard(parseBoardString(boardStr));
         })();
     }, [boardName]);
 
