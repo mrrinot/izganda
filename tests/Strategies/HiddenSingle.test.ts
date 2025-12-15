@@ -1,5 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { boardToText, parsePrettyBoardString } from "$src/helpers/boardHelpers";
+import { parsePrettyBoardString } from "$src/helpers/boardHelpers";
+import { getCellCandidates } from "$src/helpers/candidatesHelpers";
+import { hiddenSingle } from "$src/Solver/Strategies/HiddenSingle";
 
 const boardStr = `
 #comment here
@@ -20,6 +22,19 @@ describe("HiddenSingle strategy", () => {
     it("should convert old text to new text", () => {
         const board = parsePrettyBoardString(boardStr);
 
-        console.log("WTF", board.candidates);
+        // console.log("WTF", board.emptyCellIndices, board.candidates.map(getCellCandidates));
+        expect(getCellCandidates(3)).toMatchInlineSnapshot(`"1"`);
+
+        const move = hiddenSingle(board);
+
+        expect(move).toMatchInlineSnapshot(`
+          {
+            "clue": 1,
+            "index": 3,
+            "strategy": "Naked Single",
+          }
+        `);
+
+        expect(board.clues[3]).toMatchInlineSnapshot(`1`);
     });
 });

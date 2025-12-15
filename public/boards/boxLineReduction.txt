@@ -1,3 +1,4 @@
+# box line reduction setup
 · 1 6 | · · 7 | 8 · 3
 · 9 · | 8 · · | · · ·
 8 7 · | · · 1 | · 6 ·

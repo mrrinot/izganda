@@ -140,7 +140,7 @@ export const playMove = (board: SolverBoard, move: Move) => {
 };
 
 export const boardToText = (clues: Array<number>) => {
-    let ret = "";
+    let ret = "# Filler Header\n";
 
     for (let x = 0; x < 9; x++) {
         if (x % 3 === 0 && x > 0) {
